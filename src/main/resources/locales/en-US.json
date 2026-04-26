@@ -1,3 +1,132 @@
 {
-  "hello-world": "Hello world!"
+  "plugin-settings": {
+    "title": "Auth Guard Settings",
+    "captcha-provider": "Captcha Provider",
+    "captcha-provider-desc": "Select the bot protection service to use for login and registration forms.",
+    "captcha-none": "None",
+    "captcha-recaptcha": "Google reCAPTCHA",
+    "captcha-hcaptcha": "hCaptcha",
+    "captcha-turnstile": "Cloudflare Turnstile",
+    "captcha-site-key": "Site Key",
+    "captcha-site-key-desc": "The public site key from your captcha provider dashboard.",
+    "captcha-secret-key": "Secret Key",
+    "captcha-secret-key-desc": "The secret key from your captcha provider dashboard. For reCAPTCHA Enterprise, use your Google Cloud API key.",
+    "captcha-secret-key-new-placeholder": "Enter new secret key",
+    "recaptcha-legacy": "Legacy Mode",
+    "recaptcha-legacy-desc": "Use the standard reCAPTCHA API with a legacy secret key instead of reCAPTCHA Enterprise.",
+    "captcha-project-id": "Google Cloud Project ID",
+    "captcha-project-id-desc": "Your Google Cloud project ID (required for reCAPTCHA Enterprise).",
+    "captcha-project-id-new-placeholder": "Enter new project ID",
+    "captcha-on-login": "Captcha on Login",
+    "captcha-on-login-desc": "Require captcha verification on the login form.",
+    "captcha-on-register": "Captcha on Register",
+    "captcha-on-register-desc": "Require captcha verification on the registration form.",
+    "captcha-on-reset-password": "Captcha on Password Reset",
+    "captcha-on-reset-password-desc": "Require captcha verification on the forgot-password and password reset form.",
+    "captcha-on-verify-email": "Captcha on Email Verification",
+    "captcha-on-verify-email-desc": "Require captcha on the account activation page (email confirmation / code).",
+    "captcha-on-verify-new-email": "Captcha on New Email Confirmation",
+    "captcha-on-verify-new-email-desc": "Require captcha when the user confirms a new email address.",
+    "captcha-on-renew-password": "Captcha on Set / Renew Password",
+    "captcha-on-renew-password-desc": "Require captcha on the set-password or renew-password form (e.g. after a reset or change link).",
+    "two-factor-enabled": "Enable Two-Factor Authentication",
+    "two-factor-enabled-desc": "Allow users to set up TOTP-based two-factor authentication for their accounts.",
+    "two-factor-issuer": "2FA Issuer Name",
+    "two-factor-issuer-desc": "The name shown in authenticator apps (e.g., Google Authenticator). Defaults to your site name.",
+    "magic-login-enabled": "Enable Magic Login",
+    "magic-login-enabled-desc": "Allow users to sign in via a one-time link sent to their email address.",
+    "magic-login-expire": "Magic Link Expiration (minutes)",
+    "magic-login-expire-desc": "How long the magic login link stays valid.",
+    "save": "Save"
+  },
+  "errors": {
+    "captcha-verification-failed": "Please verify that you are not a robot.",
+    "two-factor-required": "Two-factor authentication is required. Enter the 6-digit code from your authenticator app.",
+    "two-factor-invalid-code": "Invalid two-factor authentication code."
+  },
+  "captcha": {
+    "error": "Please complete the captcha verification."
+  },
+  "two-factor": {
+    "title": "Two-Factor Authentication",
+    "description": "Add an extra layer of security to your account using an authenticator app.",
+    "enabled": "2FA is enabled on your account.",
+    "disabled": "2FA is not enabled.",
+    "setup-button": "Set Up 2FA",
+    "disable-button": "Disable 2FA",
+    "scan-qr": "Scan this QR code with your authenticator app:",
+    "manual-entry": "Or enter this key manually:",
+    "verify-code": "Enter the 6-digit code from your app to verify:",
+    "verify-button": "Verify & Enable",
+    "verifying": "Verifying...",
+    "setup-success": "Two-factor authentication has been enabled!",
+    "setup-failed": "Invalid code. Please try again.",
+    "disable-title": "Disable Two-Factor Authentication",
+    "disable-desc": "Enter your current 2FA code and password to disable.",
+    "disable-code-label": "2FA Code",
+    "disable-password-label": "Password",
+    "disable-confirm": "Disable 2FA",
+    "disable-success": "Two-factor authentication has been disabled.",
+    "disable-failed": "Invalid code or password.",
+    "login-title": "Two-Factor Authentication",
+    "login-desc": "Enter the 6-digit code from your authenticator app.",
+    "login-code-label": "Authentication Code",
+    "login-verify": "Verify",
+    "login-cancel": "Cancel",
+    "login-invalid-code": "Invalid authentication code. Please try again."
+  },
+  "magic-login": {
+    "button": "Sign in with Email Link",
+    "email-label": "Email Address",
+    "send-button": "Send Login Link",
+    "sending": "Sending...",
+    "sent-title": "Check Your Email",
+    "sent-desc": "We've sent a login link to your email address. Click the link to sign in.",
+    "back-to-login": "Back to Login",
+    "verifying": "Verifying your login link...",
+    "success": "Login successful!",
+    "expired": "This login link has expired. Please request a new one.",
+    "error": "Something went wrong. Please try again."
+  },
+  "panel-2fa": {
+    "title": "Two-Factor Authentication",
+    "edit-desc": "Set up, verify, or remove 2FA for this player. Site-wide 2FA must be enabled in Auth Guard settings first.",
+    "sidebar-title": "2FA",
+    "on": "Enabled",
+    "off": "Not set up",
+    "global-off": "2FA is disabled in Auth Guard settings, so you cannot change it for players here.",
+    "global-off-sidebar": "2FA is disabled in Auth Guard settings.",
+    "setup-pending": "Setup not finished",
+    "status-label": "2FA",
+    "remove": "Remove 2FA",
+    "remove-confirm": "Remove two-factor authentication for this player? They can set it up again from their account or you can set it from this panel again."
+  },
+  "permissions": {
+    "MANAGE_AUTH_GUARD_SETTINGS": {
+      "title": "Manage Auth Guard Settings",
+      "description": "Can configure captcha providers, two-factor authentication, and magic login settings."
+    },
+    "MANAGE_PLAYER_TWO_FACTOR": {
+      "title": "Manage players' 2FA",
+      "description": "View and change two-factor authentication for players from the player detail page and the edit player modal."
+    }
+  },
+  "activity-logs": {
+    "UPDATED_AUTH_GUARD_SETTINGS": "<b>{username}</b> updated the Auth Guard plugin settings.",
+    "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> {enabled, select, true {enabled} other {disabled}} two-factor authentication.",
+    "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b> removed two-factor authentication for <b>{targetUsername}</b>."
+  },
+  "mail": {
+    "magic-login": {
+      "subject": "Sign in to {websiteName}",
+      "title": "Magic Login",
+      "hello": "Hello",
+      "body": "You requested a password-free login. Click the button below to sign in to your account.",
+      "button": "Sign In",
+      "expiration-notice": "⏰ Expiration Notice",
+      "expiration-body": "This link will expire in {expireMinutes} minutes. After that, you'll need to request a new one.",
+      "alternative": "If you didn't request this login, you can safely ignore this email.",
+      "footer": "If you have any questions, please contact our support team."
+    }
+  }
 }

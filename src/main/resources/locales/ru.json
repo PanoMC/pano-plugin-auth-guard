@@ -1,0 +1,132 @@
+{
+  "plugin-settings": {
+    "title": "Настройки Auth Guard",
+    "captcha-provider": "Провайдер CAPTCHA",
+    "captcha-provider-desc": "Выберите сервис защиты от ботов для форм входа и регистрации.",
+    "captcha-none": "Нет",
+    "captcha-recaptcha": "Google reCAPTCHA",
+    "captcha-hcaptcha": "hCaptcha",
+    "captcha-turnstile": "Cloudflare Turnstile",
+    "captcha-site-key": "Ключ сайта",
+    "captcha-site-key-desc": "Публичный ключ сайта из панели вашего провайдера CAPTCHA.",
+    "captcha-secret-key": "Секретный ключ",
+    "captcha-secret-key-desc": "Секретный ключ из панели вашего провайдера CAPTCHA. Для reCAPTCHA Enterprise используйте API-ключ Google Cloud.",
+    "captcha-secret-key-new-placeholder": "Введите новый секретный ключ",
+    "recaptcha-legacy": "Режим совместимости",
+    "recaptcha-legacy-desc": "Использовать стандартный API reCAPTCHA со старым секретным ключом вместо reCAPTCHA Enterprise.",
+    "captcha-project-id": "ID проекта Google Cloud",
+    "captcha-project-id-desc": "Идентификатор вашего проекта Google Cloud (необходим для reCAPTCHA Enterprise).",
+    "captcha-project-id-new-placeholder": "Введите новый ID проекта",
+    "captcha-on-login": "CAPTCHA при входе",
+    "captcha-on-login-desc": "Требовать проверку CAPTCHA на форме входа.",
+    "captcha-on-register": "CAPTCHA при регистрации",
+    "captcha-on-register-desc": "Требовать проверку CAPTCHA на форме регистрации.",
+    "captcha-on-reset-password": "CAPTCHA при сбросе пароля",
+    "captcha-on-reset-password-desc": "Требовать проверку CAPTCHA на форме «Забыли пароль» и сброса пароля.",
+    "captcha-on-verify-email": "CAPTCHA при подтверждении email",
+    "captcha-on-verify-email-desc": "Требовать CAPTCHA на странице активации аккаунта (подтверждение email / код).",
+    "captcha-on-verify-new-email": "CAPTCHA при смене email",
+    "captcha-on-verify-new-email-desc": "Требовать CAPTCHA при подтверждении нового адреса электронной почты.",
+    "captcha-on-renew-password": "CAPTCHA при установке / смене пароля",
+    "captcha-on-renew-password-desc": "Требовать CAPTCHA на форме установки или смены пароля (например, по ссылке из письма).",
+    "two-factor-enabled": "Включить двухфакторную аутентификацию",
+    "two-factor-enabled-desc": "Позволить пользователям настроить двухфакторную аутентификацию на основе TOTP для своих аккаунтов.",
+    "two-factor-issuer": "Имя издателя 2FA",
+    "two-factor-issuer-desc": "Имя, отображаемое в приложениях-аутентификаторах. По умолчанию используется название сайта.",
+    "magic-login-enabled": "Включить магический вход",
+    "magic-login-enabled-desc": "Позволить пользователям входить через одноразовую ссылку, отправленную на их электронную почту.",
+    "magic-login-expire": "Срок действия ссылки (минуты)",
+    "magic-login-expire-desc": "Как долго ссылка для магического входа остаётся действительной.",
+    "save": "Сохранить"
+  },
+  "errors": {
+    "captcha-verification-failed": "Пожалуйста, подтвердите, что вы не робот.",
+    "two-factor-required": "Требуется двухфакторная аутентификация. Введите 6-значный код из приложения-аутентификатора.",
+    "two-factor-invalid-code": "Неверный код двухфакторной аутентификации."
+  },
+  "captcha": {
+    "error": "Пожалуйста, пройдите проверку CAPTCHA."
+  },
+  "two-factor": {
+    "title": "Двухфакторная аутентификация",
+    "description": "Добавьте дополнительный уровень безопасности для вашего аккаунта с помощью приложения-аутентификатора.",
+    "enabled": "2FA включена для вашего аккаунта.",
+    "disabled": "2FA не включена.",
+    "setup-button": "Настроить 2FA",
+    "disable-button": "Отключить 2FA",
+    "scan-qr": "Отсканируйте этот QR-код вашим приложением-аутентификатором:",
+    "manual-entry": "Или введите этот ключ вручную:",
+    "verify-code": "Введите 6-значный код из приложения для проверки:",
+    "verify-button": "Проверить и включить",
+    "verifying": "Проверка...",
+    "setup-success": "Двухфакторная аутентификация включена!",
+    "setup-failed": "Неверный код. Попробуйте ещё раз.",
+    "disable-title": "Отключить двухфакторную аутентификацию",
+    "disable-desc": "Введите текущий код 2FA и пароль для отключения.",
+    "disable-code-label": "Код 2FA",
+    "disable-password-label": "Пароль",
+    "disable-confirm": "Отключить 2FA",
+    "disable-success": "Двухфакторная аутентификация отключена.",
+    "disable-failed": "Неверный код или пароль.",
+    "login-title": "Двухфакторная аутентификация",
+    "login-desc": "Введите 6-значный код из вашего приложения-аутентификатора.",
+    "login-code-label": "Код аутентификации",
+    "login-verify": "Проверить",
+    "login-cancel": "Отмена",
+    "login-invalid-code": "Неверный код аутентификации. Попробуйте ещё раз."
+  },
+  "magic-login": {
+    "button": "Войти по ссылке из email",
+    "email-label": "Электронная почта",
+    "send-button": "Отправить ссылку для входа",
+    "sending": "Отправка...",
+    "sent-title": "Проверьте вашу почту",
+    "sent-desc": "Мы отправили ссылку для входа на ваш электронный адрес. Нажмите на ссылку для входа.",
+    "back-to-login": "Вернуться к входу",
+    "verifying": "Проверка ссылки для входа...",
+    "success": "Вход выполнен успешно!",
+    "expired": "Срок действия ссылки истёк. Запросите новую.",
+    "error": "Что-то пошло не так. Попробуйте ещё раз."
+  },
+  "panel-2fa": {
+    "title": "Двухфакторная аутентификация",
+    "edit-desc": "Настройка, подтверждение или сброс 2FA для этого игрока. Сначала 2FA должна быть включена в настройках Auth Guard.",
+    "sidebar-title": "2FA",
+    "on": "Включена",
+    "off": "Не настроена",
+    "global-off": "2FA отключена в настройках Auth Guard, поэтому изменения для игроков здесь недоступны.",
+    "global-off-sidebar": "2FA отключена в настройках Auth Guard.",
+    "setup-pending": "Настройка не завершена",
+    "status-label": "2FA",
+    "remove": "Сбросить 2FA",
+    "remove-confirm": "Сбросить двухфакторную аутентификацию для этого игрока? Пользователь сможет настроить её снова в аккаунте или вы сможете сделать это в панели."
+  },
+  "permissions": {
+    "MANAGE_AUTH_GUARD_SETTINGS": {
+      "title": "Управление настройками Auth Guard",
+      "description": "Может настраивать провайдеры CAPTCHA, двухфакторную аутентификацию и магический вход."
+    },
+    "MANAGE_PLAYER_TWO_FACTOR": {
+      "title": "Управление 2FA игроков",
+      "description": "Просмотр и изменение двухфакторной аутентификации на странице игрока и в окне редактирования."
+    }
+  },
+  "activity-logs": {
+    "UPDATED_AUTH_GUARD_SETTINGS": "<b>{username}</b> обновил настройки плагина Auth Guard.",
+    "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> {enabled, select, true {включил} other {отключил}} двухфакторную аутентификацию.",
+    "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b> сбросил 2FA для <b>{targetUsername}</b>."
+  },
+  "mail": {
+    "magic-login": {
+      "subject": "Вход в {websiteName}",
+      "title": "Магический вход",
+      "hello": "Здравствуйте",
+      "body": "Вы запросили вход без пароля. Нажмите кнопку ниже, чтобы войти в свой аккаунт.",
+      "button": "Войти",
+      "expiration-notice": "⏰ Уведомление об истечении срока",
+      "expiration-body": "Эта ссылка истечёт через {expireMinutes} минут. После этого вам нужно будет запросить новую.",
+      "alternative": "Если вы не запрашивали этот вход, можете безопасно проигнорировать это письмо.",
+      "footer": "Если у вас есть вопросы, обратитесь в нашу службу поддержки."
+    }
+  }
+}

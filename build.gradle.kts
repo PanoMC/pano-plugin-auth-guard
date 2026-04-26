@@ -68,7 +68,7 @@ dependencies {
     if (bootstrap) {
         compileOnly(project(mapOf("path" to ":Pano")))
     } else {
-        compileOnly("com.github.panomc:pano:v1.0.0-alpha.336")
+        compileOnly("com.github.panomc:pano:v1.0.0-alpha.441")
     }
 
     compileOnly(kotlin("stdlib-jdk8"))
@@ -86,6 +86,11 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework/spring-context
     compileOnly("org.springframework:spring-context:${springContextVersion}")
+
+    // https://mvnrepository.com/artifact/dev.turingcomplete/kotlin-onetimepassword
+    implementation("dev.turingcomplete:kotlin-onetimepassword:2.4.1") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
 }
 
 tasks {
@@ -163,7 +168,11 @@ tasks {
         dependencies {
             exclude(dependency("io.vertx:vertx-core"))
             exclude {
-                it.moduleGroup == "io.netty" || it.moduleGroup == "org.slf4j"
+                it.moduleGroup == "io.netty" ||
+                        it.moduleGroup == "org.slf4j" ||
+                        it.moduleGroup == "org.jetbrains.kotlin" ||
+                        it.moduleGroup == "org.jetbrains.kotlinx" ||
+                        it.moduleGroup == "org.jetbrains"
             }
         }
     }

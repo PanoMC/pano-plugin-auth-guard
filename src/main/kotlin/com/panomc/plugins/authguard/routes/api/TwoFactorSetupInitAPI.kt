@@ -11,6 +11,7 @@ import com.panomc.plugins.authguard.config.AuthGuardConfig
 import com.panomc.plugins.authguard.db.dao.TwoFactorSecretDao
 import com.panomc.plugins.authguard.db.model.TwoFactorSecret
 import com.panomc.plugins.authguard.service.TwoFactorService
+import com.panomc.plugins.license.LicenseGuard
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
 import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
@@ -52,6 +53,10 @@ class TwoFactorSetupInitAPI(
         ValidationHandlerBuilder.create(schemaRepository).build()
 
     override suspend fun handle(context: RoutingContext): Result {
+        // Anti-tamper: re-assert license at a critical write path so that patching out
+        // only the onStart license check is not enough to crack the plugin.
+        LicenseGuard.assert(plugin)
+
         val config = configManager.config
         if (!config.twoFactorEnabled) {
             throw com.panomc.platform.error.BadRequest()

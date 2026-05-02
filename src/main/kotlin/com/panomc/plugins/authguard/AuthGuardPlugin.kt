@@ -27,6 +27,10 @@ class AuthGuardPlugin : PanoPlugin() {
         applicationContext.getBean(SetupManager::class.java)
     }
 
+    private val tokenTypeRegistry by lazy {
+        applicationContext.getBean(TokenTypeRegistry::class.java)
+    }
+
     private var isInitialized = false
 
     override suspend fun onStart() {
@@ -38,6 +42,14 @@ class AuthGuardPlugin : PanoPlugin() {
         logger.info("Starting...")
 
         startPlugin()
+    }
+
+    /**
+     * Invoked by the panel "Refresh license" endpoint so the panel UI sees the same outcome the
+     * next start attempt would — including signature mismatches the host alone cannot detect.
+     */
+    override suspend fun verifyLicense() {
+        licenseClient.requireValidLicense()
     }
 
     internal suspend fun startPlugin() {
@@ -68,8 +80,8 @@ class AuthGuardPlugin : PanoPlugin() {
         // Initialize database
         pluginDatabaseManager.initialize(this)
 
-        // Register custom token types
-        TokenTypeRegistry.register(MagicLoginTokenType)
+        // Register custom token types (host unregisters on plugin unload)
+        tokenTypeRegistry.registerPluginToken(pluginId, MagicLoginTokenType)
 
         logger.info("Started!")
     }

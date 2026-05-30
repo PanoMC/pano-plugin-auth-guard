@@ -11,6 +11,10 @@ const AUTH_CAPTCHA_INJECT = [
   '/api/auth/verifyEmail',
   '/api/auth/verifyNewEmail',
   '/api/auth/renewPassword',
+  // Plugin-driven auth flows that run the core auth hooks (e.g. social login) get the captcha
+  // token too, so captcha enforced server-side on these is satisfiable client-side.
+  '/api/social-login/register',
+  '/api/social-login/link-existing',
 ];
 
 let responseHandler = null;

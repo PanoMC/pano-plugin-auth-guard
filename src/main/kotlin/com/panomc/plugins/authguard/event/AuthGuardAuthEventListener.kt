@@ -63,8 +63,12 @@ class AuthGuardAuthEventListener(
             return null
         }
 
+        // Phase signal: any flow running the auth hooks (the core APIs, or a plugin like social
+        // login that runs its own register/login) can set `pano-auth-phase` to "register"/"login"
+        // so we don't have to sniff the URI. Falls back to the URI for the core /api/auth/* routes.
+        val phase = context.get<String?>("pano-auth-phase")
         val uri = context.request().uri()
-        val isRegister = uri.contains("/api/auth/register")
+        val isRegister = if (phase != null) phase == "register" else uri.contains("/api/auth/register")
         if (isRegister) {
             if (!config.captchaOnRegister) {
                 return null

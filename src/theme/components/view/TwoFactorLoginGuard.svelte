@@ -127,51 +127,64 @@
 
   if (typeof window !== 'undefined') {
     onMount(() => {
-      // Monkey-patch fetch to intercept login responses
+      // Monkey-patch fetch to intercept ANY response that asks for a second factor. We don't
+      // filter by URL — `TWO_FACTOR_REQUIRED` can only come from this plugin's onBeforeLogin
+      // hook, so the response shape is a sufficient and stable contract. This lets the modal
+      // pop on the core `/api/auth/login`, the platform's `/api/auth/complete-pending` (used by
+      // social login, magic link, …), and any future endpoint that runs the auth-completion
+      // pipeline — without auth-guard needing an explicit URL allowlist.
       originalFetch = window.fetch;
       window.fetch = async function(url, options) {
         const response = await originalFetch.call(this, url, options);
 
-        // Only intercept login endpoint
-        if (typeof url === 'string' && url.includes('/api/auth/login')) {
-          // Clone the response so we can read it without consuming
-          const cloned = response.clone();
-          try {
-            const body = await cloned.json();
+        // Cheap pre-check: only POSTs (with a body) ever trigger onBeforeLogin, and we need
+        // JSON to inspect the result. Anything else passes through untouched.
+        const method = (options?.method || (url instanceof Request ? url.method : 'GET') || 'GET').toUpperCase();
+        if (method !== 'POST') {
+          return response;
+        }
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('json')) {
+          return response;
+        }
 
-            if (isTwoFactorRequiredResponse(body)) {
-              // Store the original request for retry
-              pendingUrl = url;
-              pendingOptions = options ? { ...options } : {};
-              pendingCaptchaStepToken = body.captchaStepToken ?? null;
+        const cloned = response.clone();
+        try {
+          const body = await cloned.json();
 
-              // Show TOTP dialog and wait for user input
+          if (isTwoFactorRequiredResponse(body)) {
+            // Store the original request for retry (preserves the endpoint, so the modal works
+            // for /api/auth/login, /api/auth/complete-pending, or any other entry adapter).
+            pendingUrl = url;
+            pendingOptions = options ? { ...options } : {};
+            pendingCaptchaStepToken = body.captchaStepToken ?? null;
+
+            // Show TOTP dialog and wait for user input
+            return new Promise((resolve) => {
+              pendingResolve = resolve;
+              showTotp = true;
+              totpCode = '';
+              totpError = false;
+              tick().then(() => totpInput?.focus());
+            });
+          }
+
+          if (body.error === 'PLUGIN_DENIED_LOGIN' && body.reason === 'plugins.pano-plugin-auth-guard.errors.two-factor-invalid-code') {
+            // Still in 2FA flow — show error, keep dialog open
+            if (showTotp) {
+              totpCode = '';
+              totpError = true;
+              verifying = false;
+              tick().then(() => totpInput?.focus());
+
+              // Return a new promise that waits for the next attempt
               return new Promise((resolve) => {
                 pendingResolve = resolve;
-                showTotp = true;
-                totpCode = '';
-                totpError = false;
-                tick().then(() => totpInput?.focus());
               });
             }
-
-            if (body.error === 'PLUGIN_DENIED_LOGIN' && body.reason === 'plugins.pano-plugin-auth-guard.errors.two-factor-invalid-code') {
-              // Still in 2FA flow — show error, keep dialog open
-              if (showTotp) {
-                totpCode = '';
-                totpError = true;
-                verifying = false;
-                tick().then(() => totpInput?.focus());
-
-                // Return a new promise that waits for the next attempt
-                return new Promise((resolve) => {
-                  pendingResolve = resolve;
-                });
-              }
-            }
-          } catch (e) {
-            // Not JSON, pass through
           }
+        } catch (e) {
+          // Not JSON, pass through
         }
 
         return response;

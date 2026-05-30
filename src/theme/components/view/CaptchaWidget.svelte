@@ -53,8 +53,15 @@
   const isLoginContext = $derived(data?.pageType === 'login');
   const isRegisterContext = $derived((data?.pageType ?? '') === 'register');
 
+  // Login pages on this theme are two-step (username first, password reveal on next submit);
+  // captcha is hidden until after the first request so the user isn't asked to solve a challenge
+  // before there's any credential to validate. Plugin-hosted pages that present the credential
+  // form in a single step (e.g. social-login's link-existing form, magic-link confirm) can opt
+  // out by passing `data.deferred = false`, mounting the captcha immediately.
   const showCaptchaPanel = $derived(
-    isLoginContext ? $loginCaptchaDeferred.active : true,
+    isLoginContext && data?.deferred !== false
+      ? $loginCaptchaDeferred.active
+      : true,
   );
 
   let provider = $state('');

@@ -396,9 +396,8 @@
 
 <script>
     import {getContext} from 'svelte';
-    import {_} from '../../../main.js';
+  import { _, showSuccessToast, showErrorToast } from '../../../main.js';
     import ApiUtil from '@panomc/sdk/utils/api';
-    import {showToast} from '@panomc/sdk/toasts';
 
     export let addon;
 
@@ -464,10 +463,10 @@
       hasProjectId = addon.config.hasProjectId;
       editingProjectId = false;
       initialConfig = JSON.parse(JSON.stringify(config));
-      await showToast('components.toasts.settings-save-success');
+      await showSuccessToast('components.toasts.settings-save-success');
     } catch (e) {
       console.error('Failed to save auth guard config', e);
-      await showToast('components.toasts.settings-save-error');
+      await showErrorToast('components.toasts.settings-save-error');
     } finally {
       saving = false;
     }

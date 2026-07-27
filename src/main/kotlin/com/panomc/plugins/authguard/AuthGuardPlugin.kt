@@ -10,15 +10,9 @@ import com.panomc.plugins.authguard.service.CaptchaStepTokenService
 import com.panomc.plugins.authguard.service.CaptchaVerificationService
 import com.panomc.plugins.authguard.service.TwoFactorService
 import com.panomc.plugins.authguard.token.MagicLoginTokenType
-import com.panomc.plugins.license.PluginLicenseClient
 import io.vertx.core.Vertx
 
 class AuthGuardPlugin : PanoPlugin() {
-    /**
-     * Premium plugin: enforce a panomc.com license at startup. No-op for free builds.
-     */
-    private val licenseClient by lazy { PluginLicenseClient(this) }
-
     private val pluginDatabaseManager by lazy {
         applicationContext.getBean(PluginDatabaseManager::class.java)
     }
@@ -34,22 +28,9 @@ class AuthGuardPlugin : PanoPlugin() {
     private var isInitialized = false
 
     override suspend fun onStart() {
-        // Verify license BEFORE doing any startup work. If invalid, throws and the
-        // host marks this plugin failed and records the failure for the panel UI.
-        // Pano core itself keeps running so the operator can resolve the issue.
-        licenseClient.requireValidLicense()
-
         logger.info("Starting...")
 
         startPlugin()
-    }
-
-    /**
-     * Invoked by the panel "Refresh license" endpoint so the panel UI sees the same outcome the
-     * next start attempt would — including signature mismatches the host alone cannot detect.
-     */
-    override suspend fun verifyLicense() {
-        licenseClient.requireValidLicense()
     }
 
     internal suspend fun startPlugin() {

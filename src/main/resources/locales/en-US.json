@@ -86,7 +86,8 @@
     "verifying": "Verifying your login link...",
     "success": "Login successful!",
     "expired": "This login link has expired. Please request a new one.",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "no-panel-access": "This account has no access to the management panel."
   },
   "panel-2fa": {
     "title": "Two-Factor Authentication",

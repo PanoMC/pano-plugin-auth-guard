@@ -71,9 +71,75 @@ async function loadPublicConfig(event) {
   }
 }
 
+/** Set in onLoad, for pages that need the host API (the panel's `pano.ui.auth.login.complete`). */
+export let pano;
+
+const pushLoginCaptcha = (pano, contentEdit) => {
+  if (pano == null || typeof contentEdit !== 'function') {
+    return;
+  }
+  contentEdit((items) => {
+    items.push({
+      id: `${pluginId}-captcha`,
+      priority: 50,
+      component: viewComponent(
+        () => import('./theme/components/view/CaptchaWidget.svelte'),
+      ),
+    });
+  });
+};
+
+/**
+ * Captcha, the 2FA modal and the magic-link button on a login form. Shared by the theme's
+ * `/login` and the panel's own sign-in page (a SERVERS install runs no theme), which expose the
+ * same `pano.ui.auth.login` surface.
+ */
+function registerLoginContent(pano) {
+  pano.ui.auth.login.onLoad(async (data, event) => {
+    const body = await loadPublicConfig(event);
+    if (!body || body.result !== 'ok') return;
+
+    if (body.captchaProvider !== 'NONE' && body.captchaOnLogin) {
+      pushLoginCaptcha(pano, (cb) => pano.ui.auth.login.content.edit(cb));
+    }
+
+    if (body.twoFactorEnabled) {
+      pano.ui.auth.login.content.edit((items) => {
+        items.push({
+          id: `${pluginId}-2fa-guard`,
+          priority: 210,
+          component: viewComponent(
+            () => import('./theme/components/view/TwoFactorLoginGuard.svelte'),
+          ),
+        });
+      });
+    }
+
+    if (body.magicLoginEnabled) {
+      pano.ui.auth.login.alternativeMethods.add({
+        id: `${pluginId}-magic-login`,
+        priority: 50,
+        component: viewComponent(
+          () => import('./theme/components/view/MagicLoginButton.svelte'),
+        ),
+      });
+    }
+  });
+}
+
+function registerMagicLoginPage(pano, options = {}) {
+  pano.ui.page.register({
+    path: '/auth-guard/magic-login',
+    component: viewComponent(
+      () => import('./theme/pages/MagicLoginVerifyPage.svelte'),
+    ),
+    ...options,
+  });
+}
+
 export default class AuthGuardPlugin extends PanoPlugin {
   onLoad() {
-    const pano = this.pano;
+    pano = this.pano;
 
     if (pano.isPanel) {
       // Load config for addon detail page
@@ -118,57 +184,27 @@ export default class AuthGuardPlugin extends PanoPlugin {
         ),
         permission: `pano.plugin.${pluginId}.manage.player.two.factor`,
       });
+
+      // A SERVERS install signs in on the panel itself, so the same login widgets go there.
+      // Panels older than the `pano.ui.auth` surface simply skip this.
+      if (pano.ui.auth?.login) {
+        if (typeof globalThis !== 'undefined' && globalThis.window) {
+          installAuthGuardFetch();
+        }
+
+        registerLoginContent(pano);
+
+        // The magic link lands on /auth-guard/magic-login; on a SERVERS install the platform
+        // moves it under /panel, where the visitor has no session yet.
+        registerMagicLoginPage(pano, { public: true });
+      }
     } else {
       if (typeof globalThis !== 'undefined' && globalThis.window) {
         installAuthGuardFetch();
       }
 
-      const pushLoginCaptcha = (pano, contentEdit) => {
-        if (pano == null || typeof contentEdit !== 'function') {
-          return;
-        }
-        contentEdit((items) => {
-          items.push({
-            id: `${pluginId}-captcha`,
-            priority: 50,
-            component: viewComponent(
-              () => import('./theme/components/view/CaptchaWidget.svelte'),
-            ),
-          });
-        });
-      };
-
-      // Fetch public config and register captcha/magic login on login page
-      pano.ui.auth.login.onLoad(async (data, event) => {
-        const body = await loadPublicConfig(event);
-        if (!body || body.result !== 'ok') return;
-
-        if (body.captchaProvider !== 'NONE' && body.captchaOnLogin) {
-          pushLoginCaptcha(pano, (cb) => pano.ui.auth.login.content.edit(cb));
-        }
-
-        if (body.twoFactorEnabled) {
-          pano.ui.auth.login.content.edit((items) => {
-            items.push({
-              id: `${pluginId}-2fa-guard`,
-              priority: 210,
-              component: viewComponent(
-                () => import('./theme/components/view/TwoFactorLoginGuard.svelte'),
-              ),
-            });
-          });
-        }
-
-        if (body.magicLoginEnabled) {
-          pano.ui.auth.login.alternativeMethods.add({
-            id: `${pluginId}-magic-login`,
-            priority: 50,
-            component: viewComponent(
-              () => import('./theme/components/view/MagicLoginButton.svelte'),
-            ),
-          });
-        }
-      });
+      // Fetch public config and register captcha/2FA/magic login on the login page
+      registerLoginContent(pano);
 
       // Fetch public config and register captcha/magic login on register page
       pano.ui.auth.register.onLoad(async (data, event) => {
@@ -222,12 +258,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       });
 
       // Register magic login verify page
-      pano.ui.page.register({
-        path: '/auth-guard/magic-login',
-        component: viewComponent(
-          () => import('./theme/pages/MagicLoginVerifyPage.svelte'),
-        ),
-      });
+      registerMagicLoginPage(pano);
 
       // Register 2FA setup section in user settings
       pano.ui.settings.content.edit((items) => {

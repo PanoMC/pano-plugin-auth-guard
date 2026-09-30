@@ -39,12 +39,20 @@
     </div>
     <h5>{$_('magic-login.success')}</h5>
     <p class="text-muted small">{$_('magic-login.verifying')}</p>
+  {:else if state === 'no-panel-access'}
+    <div class="magic-verify-icon error animate__animated animate__shakeX">
+      <i class="fas fa-times-circle"></i>
+    </div>
+    <h5>{$_('magic-login.no-panel-access')}</h5>
+    <a href={loginHref} class="btn btn-secondary mt-2">
+      {$_('magic-login.back-to-login')}
+    </a>
   {:else if state === 'expired'}
     <div class="magic-verify-icon error animate__animated animate__shakeX">
       <i class="fas fa-times-circle"></i>
     </div>
     <h5>{$_('magic-login.expired')}</h5>
-    <a href="/login" class="btn btn-secondary mt-2">
+    <a href={loginHref} class="btn btn-secondary mt-2">
       {$_('magic-login.back-to-login')}
     </a>
   {:else if state === 'error'}
@@ -52,7 +60,7 @@
       <i class="fas fa-exclamation-triangle"></i>
     </div>
     <h5>{$_('magic-login.error')}</h5>
-    <a href="/login" class="btn btn-secondary mt-2">
+    <a href={loginHref} class="btn btn-secondary mt-2">
       {$_('magic-login.back-to-login')}
     </a>
   {/if}
@@ -60,9 +68,12 @@
 
 <script>
   import { onMount } from 'svelte';
-  import { _ } from '../../main.js';
+  import { _, pano } from '../../main.js';
 
-  let state = $state('loading'); // loading, success, expired, error
+  let state = $state('loading'); // loading, success, expired, error, no-panel-access
+
+  // On a SERVERS install this page is served by the panel, which has its own sign-in page.
+  const loginHref = pano?.isPanel ? '/panel/login' : '/login';
 
   onMount(async () => {
     const params = new URLSearchParams(window.location.search);
@@ -79,6 +90,15 @@
 
       if (body.result === 'ok') {
         state = 'success';
+
+        // The panel checks panel access and opens the dashboard itself.
+        if (pano?.isPanel && pano.ui.auth?.login?.complete) {
+          const result = await pano.ui.auth.login.complete(body.csrfToken);
+          if (result === 'NO_PANEL_ACCESS') {
+            state = 'no-panel-access';
+          }
+          return;
+        }
 
         // Redirect to home after a short delay — full page load picks up the new session
         setTimeout(() => {

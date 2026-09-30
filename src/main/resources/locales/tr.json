@@ -86,7 +86,8 @@
     "verifying": "Giriş bağlantınız doğrulanıyor...",
     "success": "Giriş başarılı!",
     "expired": "Bu giriş bağlantısının süresi dolmuş. Lütfen yeni bir tane isteyin.",
-    "error": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+    "error": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+    "no-panel-access": "Bu hesabın yönetim paneline erişimi yok."
   },
   "panel-2fa": {
     "title": "İki faktörlü doğrulama",

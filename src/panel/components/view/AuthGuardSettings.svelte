@@ -397,7 +397,7 @@
 <script>
     import {getContext} from 'svelte';
   import { _, showSuccessToast, showErrorToast } from '../../../main.js';
-    import ApiUtil from '@panomc/sdk/utils/api';
+    import { api } from '@panomc/sdk/plugin-api';
 
     export let addon;
 
@@ -449,8 +449,8 @@
         delete body.captchaProjectId;
       }
 
-      await ApiUtil.put({
-        path: '/api/panel/auth-guard/config',
+      await api.panel.put({
+        path: '/config',
         body,
       });
       addon.config = {

@@ -119,7 +119,7 @@
 
 <script>
   import { _ } from '../../../main.js';
-  import ApiUtil from '@panomc/sdk/utils/api';
+  import { api } from '@panomc/sdk/plugin-api';
 
   export let playerData;
   export let onHookRegister;
@@ -179,10 +179,10 @@
     if (!username()) return;
     loading = true;
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(username())}/2fa`
+      const res = await api.panel.get({
+        path: `/player/${encodeURIComponent(username())}/2fa`
       });
-      if (res && res.result === 'ok') {
+      if (res && !res.error) {
         globalEnabled = !!res.twoFactorGlobalEnabled;
         twoFactorEnabled = !!res.twoFactorEnabled;
         setupPending = !!res.setupPending;
@@ -208,10 +208,10 @@
     setupLoading = true;
     verifyError = false;
     try {
-      const res = await ApiUtil.post({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(username())}/2fa/setup-init`
+      const res = await api.panel.post({
+        path: `/player/${encodeURIComponent(username())}/2fa/setup-init`
       });
-      if (res?.result === 'ok') {
+      if (!res?.error) {
         if (res.alreadyEnabled) {
           twoFactorEnabled = true;
           setupPending = false;
@@ -238,11 +238,11 @@
     verifyLoading = true;
     verifyError = false;
     try {
-      const res = await ApiUtil.post({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(username())}/2fa/verify-setup`,
+      const res = await api.panel.post({
+        path: `/player/${encodeURIComponent(username())}/2fa/verify-setup`,
         body: { code: verifyCode }
       });
-      if (res?.result === 'ok' && res.valid) {
+      if (!res?.error && res.valid) {
         setupStep = 'idle';
         twoFactorEnabled = true;
         setupPending = false;
@@ -271,10 +271,10 @@
     if (!username()) return;
     actionLoading = true;
     try {
-      const res = await ApiUtil.post({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(username())}/2fa/reset`
+      const res = await api.panel.post({
+        path: `/player/${encodeURIComponent(username())}/2fa/reset`
       });
-      if (res?.result === 'ok' && res.removed) {
+      if (!res?.error && res.removed) {
         twoFactorEnabled = false;
         setupPending = false;
         setupStep = 'idle';

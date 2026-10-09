@@ -13,16 +13,27 @@ import com.panomc.plugins.authguard.service.TwoFactorService
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.RequestPredicate
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.*
+import com.panomc.platform.schema.EndpointDoc
+import com.panomc.platform.error.BadRequest
 
 @Endpoint
 class TwoFactorSetupVerifyAPI(
     private val plugin: AuthGuardPlugin
 ) : LoggedInApi() {
-    override val paths = listOf(Path("/api/auth-guard/2fa/verify-setup", RouteType.POST))
+    override val paths = listOf(Path("/2fa/verify-setup", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Finishes 2FA setup with a code from the authenticator app. `valid` is false for a wrong code.",
+        tag = "2fa",
+        response = objectSchema()
+            .optionalProperty("alreadyEnabled", booleanSchema())
+            .optionalProperty("valid", booleanSchema()),
+        errors = listOf(BadRequest::class)
+    )
 
     private val logger = org.slf4j.LoggerFactory.getLogger(TwoFactorSetupVerifyAPI::class.java)
 

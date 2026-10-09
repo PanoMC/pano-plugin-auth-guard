@@ -1,0 +1,107 @@
+{
+  "controllers": {},
+  "format": 1,
+  "views": {
+    "auth-guard:CaptchaWidget": {
+      "classes": [
+        "auth-guard-captcha-widget",
+        "auth-guard-captcha-widget__error"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": false
+        }
+      },
+      "slots": []
+    },
+    "auth-guard:MagicLoginButton": {
+      "classes": [
+        "auth-guard-magic-login-button",
+        "auth-guard-magic-login-button__action",
+        "auth-guard-magic-login-button__alert",
+        "auth-guard-magic-login-button__back-to-login",
+        "auth-guard-magic-login-button__button",
+        "auth-guard-magic-login-button__fade-in",
+        "auth-guard-magic-login-button__form",
+        "auth-guard-magic-login-button__input",
+        "auth-guard-magic-login-button__sent",
+        "auth-guard-magic-login-button__sent-icon",
+        "auth-guard-magic-login-button__shake"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "auth-guard:MagicLoginVerifyPage": {
+      "classes": [
+        "auth-guard-magic-login-verify-page",
+        "auth-guard-magic-login-verify-page__action",
+        "auth-guard-magic-login-verify-page__action-2",
+        "auth-guard-magic-login-verify-page__back-to-login",
+        "auth-guard-magic-login-verify-page__bounce-in",
+        "auth-guard-magic-login-verify-page__icon",
+        "auth-guard-magic-login-verify-page__shake"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "auth-guard:TwoFactorLoginGuard": {
+      "classes": [
+        "auth-guard-two-factor-login-guard",
+        "auth-guard-two-factor-login-guard__action",
+        "auth-guard-two-factor-login-guard__card",
+        "auth-guard-two-factor-login-guard__description",
+        "auth-guard-two-factor-login-guard__error",
+        "auth-guard-two-factor-login-guard__input",
+        "auth-guard-two-factor-login-guard__login-verify",
+        "auth-guard-two-factor-login-guard__title"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "auth-guard:TwoFactorSetup": {
+      "classes": [
+        "auth-guard-two-factor-setup",
+        "auth-guard-two-factor-setup__action",
+        "auth-guard-two-factor-setup__action-2",
+        "auth-guard-two-factor-setup__alert",
+        "auth-guard-two-factor-setup__body",
+        "auth-guard-two-factor-setup__code-input",
+        "auth-guard-two-factor-setup__disable-confirm",
+        "auth-guard-two-factor-setup__disable-desc",
+        "auth-guard-two-factor-setup__disable-password-label",
+        "auth-guard-two-factor-setup__disable-title",
+        "auth-guard-two-factor-setup__disabled",
+        "auth-guard-two-factor-setup__fade-in",
+        "auth-guard-two-factor-setup__footer",
+        "auth-guard-two-factor-setup__header",
+        "auth-guard-two-factor-setup__input",
+        "auth-guard-two-factor-setup__label",
+        "auth-guard-two-factor-setup__modal",
+        "auth-guard-two-factor-setup__qr",
+        "auth-guard-two-factor-setup__qr-image",
+        "auth-guard-two-factor-setup__secret",
+        "auth-guard-two-factor-setup__setup-button",
+        "auth-guard-two-factor-setup__setup-success",
+        "auth-guard-two-factor-setup__shake",
+        "auth-guard-two-factor-setup__title",
+        "auth-guard-two-factor-setup__verifying"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": true
+        }
+      },
+      "slots": []
+    }
+  }
+}

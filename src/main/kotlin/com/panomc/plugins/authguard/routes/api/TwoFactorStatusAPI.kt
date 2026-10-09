@@ -10,14 +10,24 @@ import com.panomc.plugins.authguard.config.AuthGuardConfig
 import com.panomc.plugins.authguard.db.dao.TwoFactorSecretDao
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
+import com.panomc.platform.schema.EndpointDoc
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 @Endpoint
 class TwoFactorStatusAPI(
     private val plugin: AuthGuardPlugin
 ) : LoggedInApi() {
-    override val paths = listOf(Path("/api/auth-guard/2fa/status", RouteType.GET))
+    override val paths = listOf(Path("/2fa/status", RouteType.GET))
+
+    override val doc = EndpointDoc(
+        summary = "Tells whether 2FA is enabled on the site and for the signed-in user.",
+        tag = "2fa",
+        response = objectSchema()
+            .requiredProperty("twoFactorGlobalEnabled", booleanSchema())
+            .requiredProperty("twoFactorEnabled", booleanSchema())
+    )
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

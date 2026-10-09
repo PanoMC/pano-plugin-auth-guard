@@ -14,16 +14,25 @@ import com.panomc.plugins.authguard.token.MagicLoginTokenType
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.RequestPredicate
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Bodies
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Bodies
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.*
+import com.panomc.platform.schema.EndpointDoc
+import com.panomc.platform.error.BadRequest
 
 @Endpoint
 class MagicLoginInitAPI(
     private val plugin: AuthGuardPlugin
 ) : Api() {
-    override val paths = listOf(Path("/api/auth-guard/magic-login/init", RouteType.POST))
+    override val paths = listOf(Path("/magic-login/init", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Sends a magic login link to the e-mail address. Answers the same for an unknown address.",
+        tag = "magic-login",
+        response = objectSchema(),
+        errors = listOf(BadRequest::class)
+    )
 
     private val databaseManager by lazy {
         plugin.applicationContext.getBean(DatabaseManager::class.java)

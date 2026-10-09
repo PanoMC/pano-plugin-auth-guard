@@ -1,22 +1,22 @@
 <script module>
   /**
    * Invoked during panel `executeHookLoad` + layout load.
-   * Without `request: event`, `ApiUtil` has no session/CSRF on SSR; the first HTML is empty.
-   * (`ApiUtil` is only imported in the instance script; two imports with the same name fail in Svelte 5.)
+   * Without `request: event`, `api` has no session/CSRF on SSR; the first HTML is empty.
+   * (`api` is only imported in the instance script; two imports with the same name fail in Svelte 5.)
    * @param {import('@sveltejs/kit').LayoutLoadEvent} event
    */
   export async function load(event) {
-    const { default: ApiUtil } = await import('@panomc/sdk/utils/api');
+    const { api } = await import('@panomc/sdk/plugin-api');
     const username = event.params?.username;
     if (!username || typeof username !== 'string') {
       return {};
     }
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(username)}/2fa`,
+      const res = await api.panel.get({
+        path: `/player/${encodeURIComponent(username)}/2fa`,
         request: event,
       });
-      if (res && res.result === 'ok') {
+      if (res && !res.error) {
         return {
           ag2faPreload: {
             _ok: true,
@@ -67,7 +67,7 @@
 
 <script>
   import { _ } from '../../../main.js';
-  import ApiUtil from '@panomc/sdk/utils/api';
+  import { api } from '@panomc/sdk/plugin-api';
 
   export let playerData;
 
@@ -97,10 +97,10 @@
     if (!playerData?.username) return;
     loading = true;
     try {
-      const res = await ApiUtil.get({
-        path: `/api/panel/auth-guard/player/${encodeURIComponent(playerData.username)}/2fa`
+      const res = await api.panel.get({
+        path: `/player/${encodeURIComponent(playerData.username)}/2fa`
       });
-      if (res && res.result === 'ok') {
+      if (res && !res.error) {
         globalEnabled = !!res.twoFactorGlobalEnabled;
         twoFactorEnabled = !!res.twoFactorEnabled;
         setupPending = !!res.setupPending;

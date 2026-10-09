@@ -1,8 +1,21 @@
 import {PanoPlugin, viewComponent} from '@panomc/sdk';
-import {derived, get, writable} from 'svelte/store';
+import {derived, get} from 'svelte/store';
 import {_ as i18n} from '@panomc/sdk/utils/language';
-import ApiUtil from '@panomc/sdk/utils/api';
+import { api } from '@panomc/sdk/plugin-api';
 import {installAuthGuardFetch} from './theme/authGuardFetch.js';
+import {
+  captchaProvider,
+  captchaSiteKey,
+  recaptchaLegacy,
+  captchaOnLogin,
+  captchaOnRegister,
+  twoFactorEnabled,
+  magicLoginEnabled,
+  loginCaptchaDeferred,
+  setLoginCaptchaDeferred,
+  clearLoginCaptchaDeferred,
+  setPano,
+} from './theme/state.js';
 import { showToast } from '@panomc/sdk/toasts';
 
 const pluginId = 'pano-plugin-auth-guard';
@@ -28,33 +41,29 @@ export function showErrorToast(text, params = {}) {
   return showToast(text, params, undefined, { variant: 'danger' });
 }
 
-export const captchaProvider = writable('NONE');
-export const captchaSiteKey = writable('');
-export const recaptchaLegacy = writable(false);
-export const captchaOnLogin = writable(false);
-export const captchaOnRegister = writable(false);
-export const twoFactorEnabled = writable(false);
-export const magicLoginEnabled = writable(false);
-
-/** Login + link screen: preserve “captcha open” state when the view changes and the widget unmounts. */
-export const loginCaptchaDeferred = writable({ active: false, identity: null });
-
-export function setLoginCaptchaDeferred(identity) {
-  loginCaptchaDeferred.set({ active: true, identity: identity != null && identity !== '' ? String(identity) : null });
-}
-
-export function clearLoginCaptchaDeferred() {
-  loginCaptchaDeferred.set({ active: false, identity: null });
-}
+// The public settings and the login-captcha state are plain stores in theme/state.js (the theme views import them from there);
+// re-exported so the entry keeps exposing them.
+export {
+  captchaProvider,
+  captchaSiteKey,
+  recaptchaLegacy,
+  captchaOnLogin,
+  captchaOnRegister,
+  twoFactorEnabled,
+  magicLoginEnabled,
+  loginCaptchaDeferred,
+  setLoginCaptchaDeferred,
+  clearLoginCaptchaDeferred,
+};
 
 async function loadPublicConfig(event) {
   try {
-    const body = await ApiUtil.get({
-      path: '/api/auth-guard/config',
+    const body = await api.get({
+      path: '/config',
       request: event,
     });
 
-    if (body.result === 'ok') {
+    if (!body.error) {
       captchaProvider.set(body.captchaProvider);
       captchaSiteKey.set(body.captchaSiteKey);
       recaptchaLegacy.set(body.recaptchaLegacy || false);
@@ -71,8 +80,13 @@ async function loadPublicConfig(event) {
   }
 }
 
-/** Set in onLoad, for pages that need the host API (the panel's `pano.ui.auth.login.complete`). */
+/** Set in onLoad (also handed to theme/state.js), for pages that need the host API (the panel's `pano.ui.auth.login.complete`). */
 export let pano;
+
+// A login-form step as the list item the host expects: the theme names the view (a theme can restyle it), the panel's own
+// sign-in page has no view registry and keeps the component thunk.
+const stepItem = (pano, id, load) =>
+  pano.isPanel ? {component: viewComponent(load)} : {view: id};
 
 const pushLoginCaptcha = (pano, contentEdit) => {
   if (pano == null || typeof contentEdit !== 'function') {
@@ -82,9 +96,7 @@ const pushLoginCaptcha = (pano, contentEdit) => {
     items.push({
       id: `${pluginId}-captcha`,
       priority: 50,
-      component: viewComponent(
-        () => import('./theme/components/view/CaptchaWidget.svelte'),
-      ),
+      ...stepItem(pano, 'auth-guard:CaptchaWidget', () => import('./theme/views/CaptchaWidget.svelte')),
     });
   });
 };
@@ -97,7 +109,7 @@ const pushLoginCaptcha = (pano, contentEdit) => {
 function registerLoginContent(pano) {
   pano.ui.auth.login.onLoad(async (data, event) => {
     const body = await loadPublicConfig(event);
-    if (!body || body.result !== 'ok') return;
+    if (!body || body.error) return;
 
     if (body.captchaProvider !== 'NONE' && body.captchaOnLogin) {
       pushLoginCaptcha(pano, (cb) => pano.ui.auth.login.content.edit(cb));
@@ -108,9 +120,7 @@ function registerLoginContent(pano) {
         items.push({
           id: `${pluginId}-2fa-guard`,
           priority: 210,
-          component: viewComponent(
-            () => import('./theme/components/view/TwoFactorLoginGuard.svelte'),
-          ),
+          ...stepItem(pano, 'auth-guard:TwoFactorLoginGuard', () => import('./theme/views/TwoFactorLoginGuard.svelte')),
         });
       });
     }
@@ -119,19 +129,19 @@ function registerLoginContent(pano) {
       pano.ui.auth.login.alternativeMethods.add({
         id: `${pluginId}-magic-login`,
         priority: 50,
-        component: viewComponent(
-          () => import('./theme/components/view/MagicLoginButton.svelte'),
-        ),
+        ...stepItem(pano, 'auth-guard:MagicLoginButton', () => import('./theme/views/MagicLoginButton.svelte')),
       });
     }
   });
 }
 
+// The panel's own sign-in page (a SERVERS install). On the theme the page is the view auth-guard:MagicLoginVerifyPage,
+// which registers itself from its `export const view`.
 function registerMagicLoginPage(pano, options = {}) {
   pano.ui.page.register({
     path: '/auth-guard/magic-login',
     component: viewComponent(
-      () => import('./theme/pages/MagicLoginVerifyPage.svelte'),
+      () => import('./theme/views/MagicLoginVerifyPage.svelte'),
     ),
     ...options,
   });
@@ -140,6 +150,7 @@ function registerMagicLoginPage(pano, options = {}) {
 export default class AuthGuardPlugin extends PanoPlugin {
   onLoad() {
     pano = this.pano;
+    setPano(pano);
 
     if (pano.isPanel) {
       // Load config for addon detail page
@@ -147,8 +158,8 @@ export default class AuthGuardPlugin extends PanoPlugin {
         if (data.addon.id !== pluginId) return;
 
         try {
-          const config = await ApiUtil.get({
-            path: '/api/panel/auth-guard/config',
+          const config = await api.panel.get({
+            path: '/config',
             request: event,
           });
           data.addon.config = config;
@@ -209,7 +220,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       // Fetch public config and register captcha/magic login on register page
       pano.ui.auth.register.onLoad(async (data, event) => {
         const body = await loadPublicConfig(event);
-        if (!body || body.result !== 'ok') return;
+        if (!body || body.error) return;
 
         if (body.captchaProvider !== 'NONE' && body.captchaOnRegister) {
           pushLoginCaptcha(pano, (cb) => pano.ui.auth.register.content.edit(cb));
@@ -219,7 +230,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       pano.ui.auth.resetPassword.onLoad(async (data, event) => {
         const body = await loadPublicConfig(event);
         if (
-          body?.result === 'ok' &&
+          !body?.error &&
           body.captchaProvider !== 'NONE' &&
           body.captchaOnResetPassword
         ) {
@@ -229,7 +240,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       pano.ui.auth.activate.onLoad(async (data, event) => {
         const body = await loadPublicConfig(event);
         if (
-          body?.result === 'ok' &&
+          !body?.error &&
           body.captchaProvider !== 'NONE' &&
           body.captchaOnVerifyEmail
         ) {
@@ -239,7 +250,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       pano.ui.auth.activateNewEmail.onLoad(async (data, event) => {
         const body = await loadPublicConfig(event);
         if (
-          body?.result === 'ok' &&
+          !body?.error &&
           body.captchaProvider !== 'NONE' &&
           body.captchaOnVerifyNewEmail
         ) {
@@ -249,7 +260,7 @@ export default class AuthGuardPlugin extends PanoPlugin {
       pano.ui.auth.renewPassword.onLoad(async (data, event) => {
         const body = await loadPublicConfig(event);
         if (
-          body?.result === 'ok' &&
+          !body?.error &&
           body.captchaProvider !== 'NONE' &&
           body.captchaOnRenewPassword
         ) {
@@ -257,19 +268,8 @@ export default class AuthGuardPlugin extends PanoPlugin {
         }
       });
 
-      // Register magic login verify page
-      registerMagicLoginPage(pano);
-
-      // Register 2FA setup section in user settings
-      pano.ui.settings.content.edit((items) => {
-        items.push({
-          id: `${pluginId}-2fa-settings`,
-          priority: 200,
-          component: viewComponent(
-            () => import('./theme/components/view/TwoFactorSetup.svelte'),
-          ),
-        });
-      });
+      // The magic login verify page (/auth-guard/magic-login) and the 2FA setup section of the user settings
+      // (slot settings-content) are the views auth-guard:MagicLoginVerifyPage and auth-guard:TwoFactorSetup.
     }
   }
 

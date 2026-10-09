@@ -1,74 +1,70 @@
 <style>
-  .magic-login-wrapper {
+  .auth-guard-magic-login-button {
     position: relative;
   }
 
-  .btn-magic-login {
+  .auth-guard-magic-login-button__button {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     width: 100%;
     padding: 0.65rem 1rem;
-    border-radius: 0.5rem;
     font-weight: 500;
-    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-    border: none;
-    color: #fff;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
   }
 
-  .btn-magic-login:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-    color: #fff;
-  }
-
-  .btn-magic-login:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  .btn-magic-login:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-
-  .magic-login-form {
+  .auth-guard-magic-login-button__form {
     width: 100%;
   }
 
-  .magic-login-sent {
+  .auth-guard-magic-login-button__sent {
     text-align: center;
     padding: 1rem 0;
   }
 
-  .magic-login-sent i {
+  .auth-guard-magic-login-button__sent-icon {
     font-size: 2.5rem;
-    color: #4f46e5;
     margin-bottom: 0.75rem;
+  }
+
+  .auth-guard-magic-login-button__fade-in {
+    animation: auth-guard-fade-in 250ms both;
+  }
+
+  @keyframes auth-guard-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .auth-guard-magic-login-button__shake {
+    animation: auth-guard-shake 250ms both;
+  }
+
+  @keyframes auth-guard-shake {
+    from, to { transform: translate3d(0, 0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+    20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
   }
 </style>
 
 {#if $magicLoginEnabled}
-  <div class="magic-login-wrapper">
+  <div class="auth-guard-magic-login-button">
     {#if viewState === 'button'}
       <button
-        class="btn btn-magic-login"
+        class="auth-guard-magic-login-button__button btn"
         type="button"
         onclick={() => viewState = 'form'}>
         <i class="fas fa-magic"></i>
         <span>{$_('magic-login.button')}</span>
       </button>
     {:else if viewState === 'form'}
-      <div class="magic-login-form animate__animated animate__fadeIn">
+      <div class="auth-guard-magic-login-button__form auth-guard-magic-login-button__fade-in">
         <form onsubmit={sendMagicLink}>
           <div class="mb-2">
             <div class="form-floating">
               <input
                 type="email"
-                class="form-control"
+                class="auth-guard-magic-login-button__input form-control"
                 id="magicLoginEmail"
                 bind:value={email}
                 disabled={sending}
@@ -77,10 +73,10 @@
             </div>
           </div>
           {#if errorMessage}
-            <div class="alert alert-danger py-2 small animate__animated animate__shakeX">{errorMessage}</div>
+            <div class="auth-guard-magic-login-button__alert alert alert-danger py-2 small auth-guard-magic-login-button__shake">{errorMessage}</div>
           {/if}
           <button
-            class="btn btn-magic-login w-100"
+            class="auth-guard-magic-login-button__button btn w-100"
             type="submit"
             disabled={sending || !email.includes('@')}>
             {#if sending}
@@ -92,7 +88,7 @@
             {/if}
           </button>
           <button
-            class="btn btn-link btn-sm w-100 mt-1"
+            class="auth-guard-magic-login-button__action btn btn-link btn-sm w-100 mt-1"
             type="button"
             disabled={sending}
             onclick={() => viewState = 'button'}>
@@ -101,12 +97,12 @@
         </form>
       </div>
     {:else if viewState === 'sent'}
-      <div class="magic-login-sent animate__animated animate__fadeIn">
-        <i class="fas fa-envelope-open-text d-block"></i>
+      <div class="auth-guard-magic-login-button__sent auth-guard-magic-login-button__fade-in">
+        <i class="auth-guard-magic-login-button__sent-icon fas fa-envelope-open-text d-block"></i>
         <h6>{$_('magic-login.sent-title')}</h6>
         <p class="text-muted small mb-2">{$_('magic-login.sent-desc')}</p>
         <button
-          class="btn btn-link btn-sm"
+          class="auth-guard-magic-login-button__back-to-login btn btn-link btn-sm"
           type="button"
           onclick={() => { viewState = 'button'; email = ''; }}>
           {$_('magic-login.back-to-login')}
@@ -117,7 +113,12 @@
 {/if}
 
 <script>
-  import { _, magicLoginEnabled } from '../../../main.js';
+  import { derived } from 'svelte/store';
+  import { _ as i18n } from '@panomc/sdk/utils/language';
+  import { magicLoginEnabled } from '../state.js';
+
+  // plugin translations: $_('key') reads plugins.pano-plugin-auth-guard.key
+  const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-auth-guard.${key}`, options));
 
   let viewState = $state('button'); // button, form, sent
   let email = $state('');
@@ -132,7 +133,7 @@
     errorMessage = '';
 
     try {
-      const res = await fetch('/api/auth-guard/magic-login/init', {
+      const res = await fetch('/api/plugins/pano-plugin-auth-guard/magic-login/init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -140,7 +141,7 @@
 
       const body = await res.json();
 
-      if (body.result === 'ok') {
+      if (!body.error) {
         viewState = 'sent';
       } else {
         errorMessage = $_('magic-login.error');

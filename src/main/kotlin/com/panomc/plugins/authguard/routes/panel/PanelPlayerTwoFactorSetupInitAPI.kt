@@ -15,8 +15,8 @@ import com.panomc.plugins.authguard.permission.ManagePlayerTwoFactorPermission
 import com.panomc.plugins.authguard.service.TwoFactorService
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Parameters
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Parameters
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
 
@@ -25,7 +25,7 @@ class PanelPlayerTwoFactorSetupInitAPI(
     private val plugin: AuthGuardPlugin
 ) : PanelApi() {
     override val paths =
-        listOf(Path("/api/panel/auth-guard/player/:username/2fa/setup-init", RouteType.POST))
+        listOf(Path("/player/:username/2fa/setup-init", RouteType.POST))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

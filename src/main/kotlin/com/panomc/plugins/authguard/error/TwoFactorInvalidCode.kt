@@ -2,4 +2,4 @@ package com.panomc.plugins.authguard.error
 
 import com.panomc.platform.model.Error
 
-class TwoFactorInvalidCode : Error(403)
+class TwoFactorInvalidCode : Error("TWO_FACTOR_INVALID_CODE", 403)

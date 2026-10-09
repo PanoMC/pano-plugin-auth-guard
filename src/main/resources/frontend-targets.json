@@ -1,0 +1,3 @@
+{
+  "magic-login": { "path": "/auth-guard/magic-login?token={token}", "fallback": true, "createsSession": true }
+}

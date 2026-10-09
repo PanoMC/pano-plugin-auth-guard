@@ -117,6 +117,20 @@
     "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> {enabled, select, true {enabled} other {disabled}} two-factor authentication.",
     "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b> removed two-factor authentication for <b>{targetUsername}</b>."
   },
+  "fallback": {
+    "magic-login": {
+      "title": "Sign in",
+      "heading": "Signing you in",
+      "lead": "We are checking your sign-in link.",
+      "button": "Sign in",
+      "done": "You are signed in.",
+      "continue": "Continue"
+    },
+    "errors": {
+      "MAGIC_LOGIN_LINK_EXPIRED": "This sign-in link has expired or was already used. Request a new one on the sign-in page.",
+      "BAD_REQUEST": "Signing in with a link is not available on this site."
+    }
+  },
   "mail": {
     "magic-login": {
       "subject": "Sign in to {websiteName}",

@@ -13,14 +13,29 @@ import com.panomc.plugins.authguard.db.model.TwoFactorSecret
 import com.panomc.plugins.authguard.service.TwoFactorService
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
+import com.panomc.platform.schema.EndpointDoc
+import com.panomc.platform.error.BadRequest
+import io.vertx.json.schema.common.dsl.Schemas.*
 
 @Endpoint
 class TwoFactorSetupInitAPI(
     private val plugin: AuthGuardPlugin
 ) : LoggedInApi() {
-    override val paths = listOf(Path("/api/auth-guard/2fa/setup", RouteType.POST))
+    override val paths = listOf(Path("/2fa/setup", RouteType.POST))
+
+    override val doc = EndpointDoc(
+        summary = "Starts 2FA setup for the signed-in user and returns the secret and the otpauth URI. `alreadyEnabled` is true when 2FA is already on.",
+        tag = "2fa",
+        response = objectSchema()
+            .optionalProperty("alreadyEnabled", booleanSchema())
+            .optionalProperty("secret", stringSchema())
+            .optionalProperty("totpUri", stringSchema())
+            .optionalProperty("issuer", stringSchema())
+            .optionalProperty("username", stringSchema()),
+        errors = listOf(BadRequest::class)
+    )
 
     private val logger = org.slf4j.LoggerFactory.getLogger(TwoFactorSetupInitAPI::class.java)
 

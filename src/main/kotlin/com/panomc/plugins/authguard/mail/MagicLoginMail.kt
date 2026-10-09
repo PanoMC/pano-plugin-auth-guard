@@ -28,14 +28,16 @@ class MagicLoginMail(
     ): MailParameters {
         val translations = getTranslations(i18nManager, locale, "mail.magic-login")
 
-        val magicLoginLink = "${systemParameters.websiteUrl}/auth-guard/magic-login?token=$token"
-
         return MagicLoginMailParameters(
             username = username,
-            magicLoginLink = magicLoginLink,
+            magicLoginLink = magicLoginLink(systemParameters),
             translation = translations
         )
     }
+
+    /** Where the visitor opens the session: target `auth-guard.magic-login` of the front-end URL map (frontend-targets.json). */
+    internal fun magicLoginLink(systemParameters: MailManager.Companion.SystemParameters) =
+        systemParameters.linkTo("auth-guard.magic-login", mapOf("token" to token), "/auth-guard/magic-login?token=$token")
 
     override suspend fun getTranslations(
         i18nManager: I18nManager,

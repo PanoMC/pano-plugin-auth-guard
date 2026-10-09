@@ -1,4 +1,6 @@
 import java.net.URL
+import java.util.Properties
+import java.util.zip.ZipFile
 
 plugins {
     kotlin("jvm") version "2.2.21"
@@ -47,6 +49,22 @@ val bunBinDir = File(bunDir, bunPlatform)
 var bunBin = if (isWindows) File(bunBinDir, "bun.exe") else File(bunBinDir, "bun")
 
 val pluginId: String by project
+
+// api-level (pano-api migrate-v1): "panoApiLevel" of the pano-web-platform tree this plugin is built in, else "current" from
+// the pano-api-level.properties inside the Pano jar on compileClasspath. `apiLevel=` in gradle.properties lowers it.
+val panoApiLevel: String? by lazy {
+    (findProperty("apiLevel") as String?)
+        ?: (rootProject.findProperty("panoApiLevel") as String?)
+        ?: configurations.findByName("compileClasspath")?.files?.firstNotNullOfOrNull { jar ->
+            if (!jar.isFile || !jar.name.endsWith(".jar")) null
+            else ZipFile(jar).use { zip ->
+                zip.getEntry("pano-api-level.properties")?.let { entry ->
+                    Properties().apply { load(zip.getInputStream(entry)) }.getProperty("current")
+                }
+            }
+        }
+}
+
 val pluginName: String by project
 val pluginDescription: String? by project
 val pluginPanoVersion: String by project
@@ -86,6 +104,21 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework/spring-context
     compileOnly("org.springframework:spring-context:${springContextVersion}")
+
+    // Unit tests of the front-end targets, the built-in fallback page and the endpoint docs (they use the host's classes).
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.3")
+    if (bootstrap) {
+        testImplementation(project(mapOf("path" to ":Pano")))
+        testImplementation("io.vertx:vertx-web:${vertxVersion}")
+        testImplementation("io.vertx:vertx-lang-kotlin:${vertxVersion}")
+        testImplementation("io.vertx:vertx-json-schema:${vertxVersion}")
+        testImplementation("io.vertx:vertx-web-validation:${vertxVersion}")
+        testImplementation("com.google.code.gson:gson:${gsonVersion}")
+        testImplementation("org.pf4j:pf4j:${pf4jVersion}")
+        testImplementation("org.springframework:spring-context:${springContextVersion}")
+    }
 
     // https://mvnrepository.com/artifact/dev.turingcomplete/kotlin-onetimepassword
     implementation("dev.turingcomplete:kotlin-onetimepassword:2.4.1") {
@@ -151,6 +184,7 @@ tasks {
     shadowJar {
         manifest {
             attributes["id"] = pluginId
+            panoApiLevel?.let { attributes["api-level"] = it }
             attributes["name"] = pluginName
             pluginDescription?.let { attributes["description"] = it }
             attributes["pano-version"] = pluginPanoVersion
@@ -246,4 +280,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

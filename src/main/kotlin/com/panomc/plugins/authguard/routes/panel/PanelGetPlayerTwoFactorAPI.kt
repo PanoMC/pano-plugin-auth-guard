@@ -12,8 +12,8 @@ import com.panomc.plugins.authguard.db.dao.TwoFactorSecretDao
 import com.panomc.plugins.authguard.permission.ManagePlayerTwoFactorPermission
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.Parameters
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.Parameters
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.stringSchema
 
@@ -21,7 +21,7 @@ import io.vertx.json.schema.common.dsl.Schemas.stringSchema
 class PanelGetPlayerTwoFactorAPI(
     private val plugin: AuthGuardPlugin
 ) : PanelApi() {
-    override val paths = listOf(Path("/api/panel/auth-guard/player/:username/2fa", RouteType.GET))
+    override val paths = listOf(Path("/player/:username/2fa", RouteType.GET))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

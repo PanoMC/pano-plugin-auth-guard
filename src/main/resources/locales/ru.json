@@ -117,6 +117,20 @@
     "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> {enabled, select, true {включил} other {отключил}} двухфакторную аутентификацию.",
     "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b> сбросил 2FA для <b>{targetUsername}</b>."
   },
+  "fallback": {
+    "magic-login": {
+      "title": "Вход",
+      "heading": "Выполняется вход",
+      "lead": "Мы проверяем вашу ссылку для входа.",
+      "button": "Войти",
+      "done": "Вы вошли в аккаунт.",
+      "continue": "Продолжить"
+    },
+    "errors": {
+      "MAGIC_LOGIN_LINK_EXPIRED": "Срок действия этой ссылки для входа истёк или она уже использована. Запросите новую на странице входа.",
+      "BAD_REQUEST": "Вход по ссылке на этом сайте недоступен."
+    }
+  },
   "mail": {
     "magic-login": {
       "subject": "Вход в {websiteName}",

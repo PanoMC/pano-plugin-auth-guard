@@ -4,17 +4,17 @@ const _orig = typeof globalThis !== 'undefined' && globalThis.fetch
   : null;
 
 const AUTH_CAPTCHA_INJECT = [
-  '/api/auth/login',
-  '/api/auth/register',
-  '/api/auth/verifyLinkCode',
-  '/api/auth/resetPassword',
-  '/api/auth/verifyEmail',
-  '/api/auth/verifyNewEmail',
-  '/api/auth/renewPassword',
+  '/api/v1/auth/login',
+  '/api/v1/auth/register',
+  '/api/v1/auth/verify-link-code',
+  '/api/v1/auth/reset-password',
+  '/api/v1/auth/verify-email',
+  '/api/v1/auth/verify-new-email',
+  '/api/v1/auth/renew-password',
   // Plugin-driven auth flows that run the core auth hooks (e.g. social login) get the captcha
   // token too, so captcha enforced server-side on these is satisfiable client-side.
-  '/api/social-login/register',
-  '/api/social-login/link-existing',
+  '/api/plugins/pano-plugin-social-login/social-login/register',
+  '/api/plugins/pano-plugin-social-login/social-login/link-existing',
 ];
 
 let responseHandler = null;

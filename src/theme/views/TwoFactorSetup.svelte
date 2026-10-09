@@ -1,39 +1,32 @@
 <style>
-  .two-factor-card {
-    border-radius: 0.75rem;
-  }
-
-  .two-factor-card .card-header {
+  .auth-guard-two-factor-setup__header {
     font-weight: 600;
   }
 
-  .qr-container {
+  .auth-guard-two-factor-setup__qr {
     display: flex;
     justify-content: center;
     padding: 1rem;
   }
 
-  .qr-container img {
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  .auth-guard-two-factor-setup__qr-image {
     background: white;
     padding: 0.5rem;
   }
 
-  .secret-key {
+  .auth-guard-two-factor-setup__secret {
     font-family: monospace;
     font-size: 0.95rem;
     letter-spacing: 0.05em;
-    background: var(--bs-secondary-bg, #f8f9fa);
-    color: var(--bs-body-color, #212529);
+    background: var(--pano-color-surface, #f8f9fa);
+    color: var(--pano-color-text, #212529);
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
     text-align: center;
     word-break: break-all;
     user-select: all;
   }
 
-  .code-input {
+  .auth-guard-two-factor-setup__code-input {
     font-family: monospace;
     font-size: 1.25rem;
     letter-spacing: 0.25em;
@@ -41,32 +34,55 @@
     max-width: 200px;
     margin: 0 auto;
   }
+
+  .auth-guard-two-factor-setup__fade-in {
+    animation: auth-guard-fade-in 250ms both;
+  }
+
+  @keyframes auth-guard-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .auth-guard-two-factor-setup__modal {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .auth-guard-two-factor-setup__shake {
+    animation: auth-guard-shake 250ms both;
+  }
+
+  @keyframes auth-guard-shake {
+    from, to { transform: translate3d(0, 0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+    20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
+  }
 </style>
 
 {#if globallyEnabled}
-<div class="card two-factor-card">
-  <div class="card-header">
+<div class="auth-guard-two-factor-setup card">
+  <div class="auth-guard-two-factor-setup__header card-header">
     <i class="fas fa-shield-alt me-2"></i>{$_('two-factor.title')}
   </div>
-  <div class="card-body">
+  <div class="auth-guard-two-factor-setup__body card-body">
     <p class="text-muted mb-3">{$_('two-factor.description')}</p>
 
     {#if isEnabled}
       <!-- 2FA is enabled -->
-      <div class="alert alert-success mb-3">
+      <div class="auth-guard-two-factor-setup__alert alert alert-success mb-3">
         <i class="fas fa-check-circle me-1"></i>
         {$_('two-factor.enabled')}
       </div>
-      <button class="btn btn-outline-danger btn-sm" type="button" onclick={() => showDisableModal = true}>
+      <button class="auth-guard-two-factor-setup__action btn btn-outline-danger btn-sm" type="button" onclick={() => showDisableModal = true}>
         <i class="fas fa-times me-1"></i>{$_('two-factor.disable-button')}
       </button>
     {:else if setupStep === 'idle'}
       <!-- 2FA is not enabled -->
-      <div class="alert alert-secondary mb-3">
+      <div class="auth-guard-two-factor-setup__disabled alert alert-secondary mb-3">
         <i class="fas fa-info-circle me-1"></i>
         {$_('two-factor.disabled')}
       </div>
-      <button class="btn btn-secondary" type="button" onclick={startSetup} disabled={setupLoading}>
+      <button class="auth-guard-two-factor-setup__setup-button btn btn-secondary" type="button" onclick={startSetup} disabled={setupLoading}>
         {#if setupLoading}
           <span class="spinner-border spinner-border-sm me-1" role="status"></span>
         {/if}
@@ -74,21 +90,21 @@
       </button>
     {:else if setupStep === 'scan'}
       <!-- QR code scan step -->
-      <div class="animate__animated animate__fadeIn position-relative">
+      <div class="auth-guard-two-factor-setup__fade-in position-relative">
         <button type="button" class="btn-close position-absolute top-0 end-0" aria-label="Cancel setup" onclick={() => { setupStep = 'idle'; verifyCode = ''; }}></button>
         <p class="mb-2 fw-semibold pe-4">{$_('two-factor.scan-qr')}</p>
-        <div class="qr-container">
-          <img src={qrDataUrl} alt="2FA QR Code" width="200" height="200" />
+        <div class="auth-guard-two-factor-setup__qr">
+          <img class="auth-guard-two-factor-setup__qr-image" src={qrDataUrl} alt="2FA QR Code" width="200" height="200" />
         </div>
 
         <p class="mb-1 mt-3 small text-muted">{$_('two-factor.manual-entry')}</p>
-        <div class="secret-key mb-3">{secretDisplay}</div>
+        <div class="auth-guard-two-factor-setup__secret mb-3">{secretDisplay}</div>
 
         <p class="mb-2 fw-semibold">{$_('two-factor.verify-code')}</p>
         <div class="d-flex flex-column align-items-center gap-2">
           <input
             type="text"
-            class="form-control code-input"
+            class="auth-guard-two-factor-setup__code-input form-control"
             maxlength="6"
             placeholder="000000"
             bind:value={verifyCode}
@@ -96,13 +112,13 @@
             disabled={verifyLoading} />
 
           {#if verifyError}
-            <div class="text-danger small animate__animated animate__shakeX">
+            <div class="text-danger small auth-guard-two-factor-setup__shake">
               {$_('two-factor.setup-failed')}
             </div>
           {/if}
 
           <button
-            class="btn btn-secondary"
+            class="auth-guard-two-factor-setup__verifying btn btn-secondary"
             type="button"
             onclick={verifySetup}
             disabled={verifyLoading || verifyCode.length !== 6}>
@@ -116,7 +132,7 @@
         </div>
       </div>
     {:else if setupStep === 'done'}
-      <div class="alert alert-success animate__animated animate__fadeIn">
+      <div class="auth-guard-two-factor-setup__setup-success alert alert-success auth-guard-two-factor-setup__fade-in">
         <i class="fas fa-check-circle me-1"></i>
         {$_('two-factor.setup-success')}
       </div>
@@ -127,22 +143,22 @@
 
 <!-- Disable 2FA Modal -->
 {#if showDisableModal}
-  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+  <div class="auth-guard-two-factor-setup auth-guard-two-factor-setup__modal modal fade show d-block" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="dialog">
       <div class="modal-content">
         <form onsubmit={(e) => { e.preventDefault(); disableTwoFactor(); }}>
-          <div class="modal-header">
-            <h5 class="modal-title">{$_('two-factor.disable-title')}</h5>
+          <div class="auth-guard-two-factor-setup__disable-title modal-header">
+            <h5 class="auth-guard-two-factor-setup__title modal-title">{$_('two-factor.disable-title')}</h5>
             <button type="button" class="btn-close" aria-label="Close" onclick={() => showDisableModal = false}></button>
           </div>
-          <div class="modal-body">
+          <div class="auth-guard-two-factor-setup__disable-desc modal-body">
             <p class="text-muted">{$_('two-factor.disable-desc')}</p>
 
             <div class="mb-3">
-              <label class="form-label" for="disableCode">{$_('two-factor.disable-code-label')}</label>
+              <label class="auth-guard-two-factor-setup__label form-label" for="disableCode">{$_('two-factor.disable-code-label')}</label>
               <input
                 type="text"
-                class="form-control code-input"
+                class="auth-guard-two-factor-setup__code-input form-control"
                 id="disableCode"
                 maxlength="6"
                 placeholder="000000"
@@ -151,10 +167,10 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label" for="disablePassword">{$_('two-factor.disable-password-label')}</label>
+              <label class="auth-guard-two-factor-setup__disable-password-label form-label" for="disablePassword">{$_('two-factor.disable-password-label')}</label>
               <input
                 type="password"
-                class="form-control"
+                class="auth-guard-two-factor-setup__input form-control"
                 id="disablePassword"
                 bind:value={disablePassword}
                 disabled={disableLoading} />
@@ -164,13 +180,13 @@
               <div class="text-danger small">{$_('two-factor.disable-failed')}</div>
             {/if}
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-link" onclick={() => showDisableModal = false} disabled={disableLoading}>
+          <div class="auth-guard-two-factor-setup__footer modal-footer">
+            <button type="button" class="auth-guard-two-factor-setup__action-2 btn btn-link" onclick={() => showDisableModal = false} disabled={disableLoading}>
               Cancel
             </button>
             <button
               type="submit"
-              class="btn btn-danger"
+              class="auth-guard-two-factor-setup__disable-confirm btn btn-danger"
               disabled={disableLoading || disableCode.length !== 6 || !disablePassword}>
               {#if disableLoading}
                 <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -185,19 +201,22 @@
 {/if}
 
 <script module>
-  import ApiUtil from '@panomc/sdk/utils/api';
+  import { api } from '@panomc/sdk/plugin-api';
+
+  // The 2FA section of the user settings: mounts in the settings-content slot, after the core sections.
+  export const view = { slot: 'settings-content', id: 'pano-plugin-auth-guard-2fa-settings', priority: 200 };
 
   export async function load(event) {
     try {
       const { session: { user } } = await event.parent();
       if (!user) return { globallyEnabled: false, twoFactorEnabled: false };
 
-      const res = await ApiUtil.get({
-        path: '/api/auth-guard/2fa/status',
+      const res = await api.get({
+        path: '/2fa/status',
         request: event,
       });
 
-      if (res?.result === 'ok') {
+      if (!res?.error) {
         return {
           globallyEnabled: !!res.twoFactorGlobalEnabled,
           twoFactorEnabled: !!res.twoFactorEnabled,
@@ -211,8 +230,12 @@
 </script>
 
 <script>
-  import { _ } from '../../../main.js';
+  import { derived } from 'svelte/store';
+  import { _ as i18n } from '@panomc/sdk/utils/language';
   import { untrack } from 'svelte';
+
+  // plugin translations: $_('key') reads plugins.pano-plugin-auth-guard.key
+  const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-auth-guard.${key}`, options));
 
   let { data } = $props();
 
@@ -249,8 +272,8 @@
   async function startSetup() {
     setupLoading = true;
     try {
-      const res = await ApiUtil.post({ path: '/api/auth-guard/2fa/setup' });
-      if (res.result === 'ok') {
+      const res = await api.post({ path: '/2fa/setup' });
+      if (!res.error) {
         if (res.alreadyEnabled) {
           isEnabled = true;
           setupLoading = false;
@@ -277,11 +300,11 @@
     verifyLoading = true;
     verifyError = false;
     try {
-      const res = await ApiUtil.post({
-        path: '/api/auth-guard/2fa/verify-setup',
+      const res = await api.post({
+        path: '/2fa/verify-setup',
         body: { code: verifyCode },
       });
-      if (res.result === 'ok' && res.valid) {
+      if (!res.error && res.valid) {
         setupStep = 'done';
         isEnabled = true;
       } else {
@@ -298,11 +321,11 @@
     disableLoading = true;
     disableError = false;
     try {
-      const res = await ApiUtil.post({
-        path: '/api/auth-guard/2fa/disable',
+      const res = await api.post({
+        path: '/2fa/disable',
         body: { code: disableCode, password: disablePassword },
       });
-      if (res.result === 'ok' && res.valid) {
+      if (!res.error && res.valid) {
         isEnabled = false;
         showDisableModal = false;
         disableCode = '';

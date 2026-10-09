@@ -1,5 +1,5 @@
 <style>
-  .totp-overlay {
+  .auth-guard-two-factor-login-guard {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -8,44 +8,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.2s ease;
+    animation: auth-guard-fade-in 0.2s ease;
   }
 
-  @keyframes fadeIn {
+  @keyframes auth-guard-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
   }
 
-  .totp-card {
-    background: var(--bs-body-bg, #fff);
-    border-radius: 1rem;
+  .auth-guard-two-factor-login-guard__card {
+    background: var(--pano-color-bg, #fff);
     padding: 2rem;
     max-width: 380px;
     width: 90%;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
     text-align: center;
   }
 
-  .totp-card h5 {
+  .auth-guard-two-factor-login-guard__title {
     margin-bottom: 0.25rem;
   }
 
-  .totp-card p {
+  .auth-guard-two-factor-login-guard__description {
     font-size: 0.875rem;
-    color: var(--bs-secondary);
+    color: var(--pano-color-secondary);
     margin-bottom: 1.25rem;
   }
 
-  .totp-input {
+  .auth-guard-two-factor-login-guard__input {
     font-size: 1.5rem;
     letter-spacing: 0.5rem;
     text-align: center;
     padding: 0.75rem;
-    border-radius: 0.5rem;
   }
 
-  .totp-error {
-    color: var(--bs-danger);
+  .auth-guard-two-factor-login-guard__error {
+    color: var(--pano-color-danger);
     font-size: 0.85rem;
     margin-top: 0.5rem;
   }
@@ -53,15 +50,15 @@
 
 {#if showTotp}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="totp-overlay" on:click|self={cancel}>
-    <div class="totp-card">
-      <h5><i class="fas fa-shield-halved me-2"></i>{$_('two-factor.login-title')}</h5>
-      <p>{$_('two-factor.login-desc')}</p>
+  <div class="auth-guard-two-factor-login-guard" on:click|self={cancel}>
+    <div class="auth-guard-two-factor-login-guard__card">
+      <h5 class="auth-guard-two-factor-login-guard__title"><i class="fas fa-shield-halved me-2"></i>{$_('two-factor.login-title')}</h5>
+      <p class="auth-guard-two-factor-login-guard__description">{$_('two-factor.login-desc')}</p>
 
       <input
         bind:this={totpInput}
         bind:value={totpCode}
-        class="form-control totp-input"
+        class="auth-guard-two-factor-login-guard__input form-control"
         type="text"
         inputmode="numeric"
         autocomplete="one-time-code"
@@ -73,15 +70,15 @@
       />
 
       {#if totpError}
-        <div class="totp-error">{$_('two-factor.login-invalid-code')}</div>
+        <div class="auth-guard-two-factor-login-guard__error">{$_('two-factor.login-invalid-code')}</div>
       {/if}
 
       <div class="d-flex gap-2 mt-3">
-        <button class="btn btn-outline-secondary flex-fill" type="button" on:click={cancel} disabled={verifying}>
+        <button class="auth-guard-two-factor-login-guard__action btn btn-outline-secondary flex-fill" type="button" on:click={cancel} disabled={verifying}>
           {$_('two-factor.login-cancel')}
         </button>
         <button
-          class="btn btn-secondary flex-fill"
+          class="auth-guard-two-factor-login-guard__login-verify btn btn-secondary flex-fill"
           type="button"
           on:click={verify}
           disabled={verifying || totpCode.length !== 6}
@@ -98,7 +95,11 @@
 
 <script>
   import { onMount, onDestroy, tick } from 'svelte';
-  import { _ } from '../../../main.js';
+  import { derived } from 'svelte/store';
+  import { _ as i18n } from '@panomc/sdk/utils/language';
+
+  // plugin translations: $_('key') reads plugins.pano-plugin-auth-guard.key
+  const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-auth-guard.${key}`, options));
 
   let showTotp = $state(false);
   let totpCode = $state('');
@@ -115,13 +116,14 @@
 
   let originalFetch;
 
-  /** API extras.reason + cancel() synthetic response — i18n key in plugin locales */
+  /** API error.details.reason + cancel() synthetic response — i18n key in plugin locales */
   const TWO_FACTOR_REQUIRED_REASON = 'plugins.pano-plugin-auth-guard.errors.two-factor-required';
 
   function isTwoFactorRequiredResponse(body) {
     return (
-      body?.error === 'PLUGIN_DENIED_LOGIN' &&
-      (body.reason === 'TWO_FACTOR_REQUIRED' || body.reason === TWO_FACTOR_REQUIRED_REASON)
+      body?.error?.code === 'PLUGIN_DENIED_LOGIN' &&
+      (body.error.details?.reason === 'TWO_FACTOR_REQUIRED' ||
+        body.error.details?.reason === TWO_FACTOR_REQUIRED_REASON)
     );
   }
 
@@ -130,7 +132,7 @@
       // Monkey-patch fetch to intercept ANY response that asks for a second factor. We don't
       // filter by URL — `TWO_FACTOR_REQUIRED` can only come from this plugin's onBeforeLogin
       // hook, so the response shape is a sufficient and stable contract. This lets the modal
-      // pop on the core `/api/auth/login`, the platform's `/api/auth/complete-pending` (used by
+      // pop on the core auth login route, the platform's complete-pending route (used by
       // social login, magic link, …), and any future endpoint that runs the auth-completion
       // pipeline — without auth-guard needing an explicit URL allowlist.
       originalFetch = window.fetch;
@@ -154,10 +156,10 @@
 
           if (isTwoFactorRequiredResponse(body)) {
             // Store the original request for retry (preserves the endpoint, so the modal works
-            // for /api/auth/login, /api/auth/complete-pending, or any other entry adapter).
+            // for login, complete-pending, or any other entry adapter).
             pendingUrl = url;
             pendingOptions = options ? { ...options } : {};
-            pendingCaptchaStepToken = body.captchaStepToken ?? null;
+            pendingCaptchaStepToken = body.error.details?.captchaStepToken ?? null;
 
             // Show TOTP dialog and wait for user input
             return new Promise((resolve) => {
@@ -169,7 +171,10 @@
             });
           }
 
-          if (body.error === 'PLUGIN_DENIED_LOGIN' && body.reason === 'plugins.pano-plugin-auth-guard.errors.two-factor-invalid-code') {
+          if (
+            body?.error?.code === 'PLUGIN_DENIED_LOGIN' &&
+            body.error.details?.reason === 'plugins.pano-plugin-auth-guard.errors.two-factor-invalid-code'
+          ) {
             // Still in 2FA flow — show error, keep dialog open
             if (showTotp) {
               totpCode = '';
@@ -253,11 +258,12 @@
     if (pendingResolve) {
       const errorResponse = new Response(
         JSON.stringify({
-          result: 'error',
-          error: 'PLUGIN_DENIED_LOGIN',
-          reason: TWO_FACTOR_REQUIRED_REASON
+          error: {
+            code: 'PLUGIN_DENIED_LOGIN',
+            details: { reason: TWO_FACTOR_REQUIRED_REASON }
+          }
         }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
       pendingResolve(errorResponse);
       pendingResolve = null;

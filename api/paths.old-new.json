@@ -1,0 +1,106 @@
+[
+  {
+    "method": "POST",
+    "old": "/api/auth-guard/2fa/disable",
+    "new": "/api/plugins/pano-plugin-auth-guard/2fa/disable",
+    "relative": "/plugins/pano-plugin-auth-guard/2fa/disable",
+    "class": "TwoFactorDisableAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/TwoFactorDisableAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/auth-guard/2fa/setup",
+    "new": "/api/plugins/pano-plugin-auth-guard/2fa/setup",
+    "relative": "/plugins/pano-plugin-auth-guard/2fa/setup",
+    "class": "TwoFactorSetupInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/TwoFactorSetupInitAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/auth-guard/2fa/status",
+    "new": "/api/plugins/pano-plugin-auth-guard/2fa/status",
+    "relative": "/plugins/pano-plugin-auth-guard/2fa/status",
+    "class": "TwoFactorStatusAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/TwoFactorStatusAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/auth-guard/2fa/verify-setup",
+    "new": "/api/plugins/pano-plugin-auth-guard/2fa/verify-setup",
+    "relative": "/plugins/pano-plugin-auth-guard/2fa/verify-setup",
+    "class": "TwoFactorSetupVerifyAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/TwoFactorSetupVerifyAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/auth-guard/config",
+    "new": "/api/plugins/pano-plugin-auth-guard/config",
+    "relative": "/plugins/pano-plugin-auth-guard/config",
+    "class": "GetAuthGuardConfigPublicAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/GetAuthGuardConfigPublicAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/auth-guard/magic-login/init",
+    "new": "/api/plugins/pano-plugin-auth-guard/magic-login/init",
+    "relative": "/plugins/pano-plugin-auth-guard/magic-login/init",
+    "class": "MagicLoginInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/MagicLoginInitAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/auth-guard/magic-login/verify",
+    "new": "/api/plugins/pano-plugin-auth-guard/magic-login/verify",
+    "relative": "/plugins/pano-plugin-auth-guard/magic-login/verify",
+    "class": "MagicLoginVerifyAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/api/MagicLoginVerifyAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/auth-guard/config",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/config",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/config",
+    "class": "PanelGetAuthGuardConfigAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelGetAuthGuardConfigAPI.kt"
+  },
+  {
+    "method": "PUT",
+    "old": "/api/panel/auth-guard/config",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/config",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/config",
+    "class": "PanelUpdateAuthGuardConfigAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelUpdateAuthGuardConfigAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/auth-guard/player/:username/2fa",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/player/:username/2fa",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/player/:username/2fa",
+    "class": "PanelGetPlayerTwoFactorAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelGetPlayerTwoFactorAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/panel/auth-guard/player/:username/2fa/reset",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/reset",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/reset",
+    "class": "PanelPlayerTwoFactorAdminResetAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelPlayerTwoFactorAdminResetAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/panel/auth-guard/player/:username/2fa/setup-init",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/setup-init",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/setup-init",
+    "class": "PanelPlayerTwoFactorSetupInitAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelPlayerTwoFactorSetupInitAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/panel/auth-guard/player/:username/2fa/verify-setup",
+    "new": "/api/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/verify-setup",
+    "relative": "/plugins/pano-plugin-auth-guard/panel/player/:username/2fa/verify-setup",
+    "class": "PanelPlayerTwoFactorSetupVerifyAPI",
+    "file": "src/main/kotlin/com/panomc/plugins/authguard/routes/panel/PanelPlayerTwoFactorSetupVerifyAPI.kt"
+  }
+]

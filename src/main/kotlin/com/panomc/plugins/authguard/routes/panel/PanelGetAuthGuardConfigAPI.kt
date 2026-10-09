@@ -10,14 +10,14 @@ import com.panomc.plugins.authguard.permission.ManageAuthGuardSettingsPermission
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
-import io.vertx.ext.web.validation.builder.ValidationHandlerBuilder
+import com.panomc.platform.schema.dsl.ValidationHandlerBuilder
 import io.vertx.json.schema.SchemaRepository
 
 @Endpoint
 class PanelGetAuthGuardConfigAPI(
     private val plugin: AuthGuardPlugin
 ) : PanelApi() {
-    override val paths = listOf(Path("/api/panel/auth-guard/config", RouteType.GET))
+    override val paths = listOf(Path("/config", RouteType.GET))
 
     private val authProvider by lazy {
         plugin.applicationContext.getBean(AuthProvider::class.java)

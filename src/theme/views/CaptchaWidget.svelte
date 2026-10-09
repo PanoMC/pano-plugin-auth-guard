@@ -1,30 +1,20 @@
 <style>
-  .captcha-container {
+  .auth-guard-captcha-widget {
     display: flex;
     justify-content: center;
     margin-top: 0.5rem;
   }
 
-  .captcha-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    color: var(--bs-secondary);
-    font-size: 0.875rem;
-  }
-
-  .captcha-error {
+  .auth-guard-captcha-widget__error {
     text-align: center;
     font-size: 0.875rem;
   }
 </style>
 
 {#if provider !== 'NONE' && showCaptchaPanel}
-  <div class="captcha-container">
+  <div class="auth-guard-captcha-widget">
     {#if error}
-      <div class="captcha-error text-danger">
+      <div class="auth-guard-captcha-widget__error text-danger">
         <i class="fas fa-exclamation-triangle me-1"></i>
         {error}
       </div>
@@ -38,7 +28,7 @@
   import { onMount, untrack } from 'svelte';
   import { get } from 'svelte/store';
 
-  import { installAuthGuardFetch, isAuthGuardFetchPatched, setAuthGuardFetchResponseHandler } from '../../authGuardFetch.js';
+  import { installAuthGuardFetch, isAuthGuardFetchPatched, setAuthGuardFetchResponseHandler } from '../authGuardFetch.js';
   import {
     captchaProvider,
     captchaSiteKey,
@@ -46,7 +36,7 @@
     clearLoginCaptchaDeferred,
     loginCaptchaDeferred,
     setLoginCaptchaDeferred,
-  } from '../../../main.js';
+  } from '../state.js';
 
   let { data = {} } = $props();
 
@@ -87,12 +77,12 @@
    * so the user can solve again. Skip while 2FA is in progress (server uses captchaStepToken).
    */
   function shouldResetCaptchaAfterAuthError(responseBody, requestOptions, requestUrl) {
-    if (responseBody?.result !== 'error') return false;
-    if (responseBody.error === 'LINK_CODE_REQUIRED') {
+    if (!responseBody?.error) return false;
+    if (responseBody.error.code === 'LINK_CODE_REQUIRED') {
       return false;
     }
-    if (responseBody.error === 'PLUGIN_DENIED_LOGIN') {
-      const r = responseBody.reason;
+    if (responseBody.error.code === 'PLUGIN_DENIED_LOGIN') {
+      const r = responseBody.error.details?.reason;
       if (r === 'TWO_FACTOR_REQUIRED') return false;
       if (r === 'plugins.pano-plugin-auth-guard.errors.two-factor-required') return false;
       if (typeof r === 'string' && r.includes('two-factor')) return false;
@@ -105,7 +95,7 @@
     }
     if (req?.captchaStepToken) return false;
     // Login "username first" step sends blank password — do not clear a solved captcha
-    if (typeof requestUrl === 'string' && requestUrl.includes('/api/auth/login')) {
+    if (typeof requestUrl === 'string' && requestUrl.includes('/api/v1/auth/login')) {
       const p = req?.password;
       if (p == null || String(p).trim() === '') {
         return false;
@@ -132,10 +122,10 @@
     }
     try {
       const b = JSON.parse(requestOptions.body);
-      if (typeof requestUrl === 'string' && requestUrl.includes('/api/auth/login')) {
+      if (typeof requestUrl === 'string' && requestUrl.includes('/api/v1/auth/login')) {
         return b.usernameOrEmail != null ? String(b.usernameOrEmail) : null;
       }
-      if (typeof requestUrl === 'string' && requestUrl.includes('/api/auth/verifyLinkCode')) {
+      if (typeof requestUrl === 'string' && requestUrl.includes('/api/v1/auth/verify-link-code')) {
         return b.username != null ? String(b.username) : null;
       }
     } catch (e) {
@@ -332,20 +322,20 @@
       if (resJson == null) {
         if (
           typeof requestUrl === 'string' &&
-          (requestUrl.includes('/api/auth/login') || requestUrl.includes('/api/auth/verifyLinkCode'))
+          (requestUrl.includes('/api/v1/auth/login') || requestUrl.includes('/api/v1/auth/verify-link-code'))
         ) {
           markAfterFirstLoginRequest(requestUrl, options);
         }
         return;
       }
-      if (requestUrl.includes('/api/auth/login')) {
-        if (resJson?.result === 'ok') {
+      if (requestUrl.includes('/api/v1/auth/login')) {
+        if (!resJson?.error) {
           clearLoginCaptchaStep();
         } else {
           markAfterFirstLoginRequest(requestUrl, options);
         }
-      } else if (requestUrl.includes('/api/auth/verifyLinkCode')) {
-        if (resJson?.result === 'ok') {
+      } else if (requestUrl.includes('/api/v1/auth/verify-link-code')) {
+        if (!resJson?.error) {
           clearLoginCaptchaStep();
         } else {
           markAfterFirstLoginRequest(requestUrl, options);

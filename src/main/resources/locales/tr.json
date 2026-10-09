@@ -117,6 +117,20 @@
     "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> iki faktörlü doğrulamayı {enabled, select, true {etkinleştirdi} other {kapattı}}.",
     "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b>, <b>{targetUsername}</b> için iki faktörlü doğrulamayı kaldırdı."
   },
+  "fallback": {
+    "magic-login": {
+      "title": "Giriş yap",
+      "heading": "Giriş yapılıyor",
+      "lead": "Giriş bağlantın kontrol ediliyor.",
+      "button": "Giriş yap",
+      "done": "Giriş yaptın.",
+      "continue": "Devam et"
+    },
+    "errors": {
+      "MAGIC_LOGIN_LINK_EXPIRED": "Bu giriş bağlantısının süresi dolmuş ya da zaten kullanılmış. Giriş sayfasından yenisini iste.",
+      "BAD_REQUEST": "Bağlantıyla giriş bu sitede kullanılamıyor."
+    }
+  },
   "mail": {
     "magic-login": {
       "subject": "{websiteName} hesabınıza giriş yapın",

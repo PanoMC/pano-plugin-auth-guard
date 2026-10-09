@@ -110,16 +110,19 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.3")
+    // The tests use the host's classes: the umbrella build takes the project, a standalone build the same Pano as above.
     if (bootstrap) {
         testImplementation(project(mapOf("path" to ":Pano")))
-        testImplementation("io.vertx:vertx-web:${vertxVersion}")
-        testImplementation("io.vertx:vertx-lang-kotlin:${vertxVersion}")
-        testImplementation("io.vertx:vertx-json-schema:${vertxVersion}")
-        testImplementation("io.vertx:vertx-web-validation:${vertxVersion}")
-        testImplementation("com.google.code.gson:gson:${gsonVersion}")
-        testImplementation("org.pf4j:pf4j:${pf4jVersion}")
-        testImplementation("org.springframework:spring-context:${springContextVersion}")
+    } else {
+        testImplementation("com.github.panomc:pano:7417f3a3f0")
     }
+    testImplementation("io.vertx:vertx-web:${vertxVersion}")
+    testImplementation("io.vertx:vertx-lang-kotlin:${vertxVersion}")
+    testImplementation("io.vertx:vertx-json-schema:${vertxVersion}")
+    testImplementation("io.vertx:vertx-web-validation:${vertxVersion}")
+    testImplementation("com.google.code.gson:gson:${gsonVersion}")
+    testImplementation("org.pf4j:pf4j:${pf4jVersion}")
+    testImplementation("org.springframework:spring-context:${springContextVersion}")
 
     // https://mvnrepository.com/artifact/dev.turingcomplete/kotlin-onetimepassword
     implementation("dev.turingcomplete:kotlin-onetimepassword:2.4.1") {

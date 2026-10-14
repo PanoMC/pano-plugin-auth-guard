@@ -86,8 +86,7 @@ dependencies {
     if (bootstrap) {
         compileOnly(project(mapOf("path" to ":Pano")))
     } else {
-        // Pano v1.0.0-alpha.547 by its commit: JitPack's build of the tag itself failed on a JDK download and stays cached.
-        compileOnly("com.github.panomc:pano:7417f3a3f0")
+        compileOnly("com.github.panomc:pano:v1.0.0-alpha.560")
     }
 
     compileOnly(kotlin("stdlib-jdk8"))
@@ -114,7 +113,7 @@ dependencies {
     if (bootstrap) {
         testImplementation(project(mapOf("path" to ":Pano")))
     } else {
-        testImplementation("com.github.panomc:pano:7417f3a3f0")
+        testImplementation("com.github.panomc:pano:v1.0.0-alpha.560")
     }
     testImplementation("io.vertx:vertx-web:${vertxVersion}")
     testImplementation("io.vertx:vertx-lang-kotlin:${vertxVersion}")

@@ -130,18 +130,5 @@
       "MAGIC_LOGIN_LINK_EXPIRED": "Bu giriş bağlantısının süresi dolmuş ya da zaten kullanılmış. Giriş sayfasından yenisini iste.",
       "BAD_REQUEST": "Bağlantıyla giriş bu sitede kullanılamıyor."
     }
-  },
-  "mail": {
-    "magic-login": {
-      "subject": "{websiteName} hesabınıza giriş yapın",
-      "title": "Sihirli Giriş",
-      "hello": "Merhaba",
-      "body": "Şifresiz giriş isteğinde bulundunuz. Hesabınıza giriş yapmak için aşağıdaki düğmeye tıklayın.",
-      "button": "Giriş Yap",
-      "expiration-notice": "⏰ Süre Uyarısı",
-      "expiration-body": "Bu bağlantı {expireMinutes} dakika içinde geçerliliğini yitirecek. Bundan sonra yeni bir tane istemeniz gerekecek.",
-      "alternative": "Bu giriş isteğini siz yapmadıysanız, bu e-postayı güvenle yok sayabilirsiniz.",
-      "footer": "Sorularınız varsa, lütfen destek ekibimizle iletişime geçin."
-    }
   }
 }

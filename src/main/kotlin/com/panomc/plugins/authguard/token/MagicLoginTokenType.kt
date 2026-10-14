@@ -5,12 +5,14 @@ import java.util.*
 
 /**
  * Magic login token type for passwordless email authentication.
- * Expires in 15 minutes.
+ * Expires in [EXPIRE_MINUTES] minutes.
  */
 object MagicLoginTokenType : TokenType {
+    const val EXPIRE_MINUTES = 15
+
     override fun getExpireDate(): Long {
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, 15)
+        calendar.add(Calendar.MINUTE, EXPIRE_MINUTES)
         return calendar.timeInMillis
     }
 }

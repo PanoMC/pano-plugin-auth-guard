@@ -130,18 +130,5 @@
       "MAGIC_LOGIN_LINK_EXPIRED": "This sign-in link has expired or was already used. Request a new one on the sign-in page.",
       "BAD_REQUEST": "Signing in with a link is not available on this site."
     }
-  },
-  "mail": {
-    "magic-login": {
-      "subject": "Sign in to {websiteName}",
-      "title": "Magic Login",
-      "hello": "Hello",
-      "body": "You requested a password-free login. Click the button below to sign in to your account.",
-      "button": "Sign In",
-      "expiration-notice": "⏰ Expiration Notice",
-      "expiration-body": "This link will expire in {expireMinutes} minutes. After that, you'll need to request a new one.",
-      "alternative": "If you didn't request this login, you can safely ignore this email.",
-      "footer": "If you have any questions, please contact our support team."
-    }
   }
 }

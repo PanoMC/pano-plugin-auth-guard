@@ -1,0 +1,39 @@
+{
+  "mails": [
+    {
+      "key": "magic-login",
+      "name": { "en-US": "Magic login", "tr": "Sihirli giriş", "ru": "Вход по ссылке" },
+      "description": {
+        "en-US": "Sent when a user asks for a password-free login link.",
+        "tr": "Kullanıcı şifresiz giriş bağlantısı istediğinde gönderilir.",
+        "ru": "Отправляется, когда пользователь запрашивает ссылку для входа без пароля."
+      },
+      "variants": [
+        {
+          "key": "default",
+          "name": { "en-US": "Default", "tr": "Varsayılan", "ru": "По умолчанию" },
+          "variables": [
+            {
+              "name": "username",
+              "type": "text",
+              "label": { "en-US": "Username", "tr": "Kullanıcı adı", "ru": "Имя пользователя" },
+              "sample": "Steve"
+            },
+            {
+              "name": "magicLoginLink",
+              "type": "url",
+              "label": { "en-US": "Login link", "tr": "Giriş bağlantısı", "ru": "Ссылка для входа" },
+              "sample": "https://example.com/auth-guard/magic-login?token=abc"
+            },
+            {
+              "name": "expireMinutes",
+              "type": "number",
+              "label": { "en-US": "Link lifetime (minutes)", "tr": "Bağlantı süresi (dakika)", "ru": "Срок действия ссылки (минуты)" },
+              "sample": 15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -95,7 +95,7 @@ class MagicLoginInitAPI(
         tokenProvider.saveToken(token, userId.toString(), MagicLoginTokenType, expireDate, sqlClient)
 
         // Send magic login email
-        mailManager.sendMail(
+        mailManager.sendTemplate(
             sqlClient,
             userId,
             MagicLoginMail(token, username, email)

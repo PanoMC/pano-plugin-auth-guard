@@ -1,18 +1,21 @@
 package com.panomc.plugins.authguard.token
 
 import com.panomc.platform.token.TokenType
-import java.util.*
 
 /**
  * Magic login token type for passwordless email authentication.
- * Expires in [EXPIRE_MINUTES] minutes.
+ * Expires after the panel setting `magicLoginLinkExpireMinutes` (clamped to [MIN_MINUTES]..[MAX_MINUTES]).
  */
 object MagicLoginTokenType : TokenType {
-    const val EXPIRE_MINUTES = 15
+    const val DEFAULT_MINUTES = 15
+    const val MIN_MINUTES = 1
+    const val MAX_MINUTES = 1440 // the panel field allows up to a day
 
-    override fun getExpireDate(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, EXPIRE_MINUTES)
-        return calendar.timeInMillis
-    }
+    /** Reads the configured lifetime; set by the plugin on start. */
+    @Volatile
+    var configuredMinutes: () -> Int = { DEFAULT_MINUTES }
+
+    fun expireMinutes(): Int = configuredMinutes().coerceIn(MIN_MINUTES, MAX_MINUTES)
+
+    override fun getExpireDate(): Long = System.currentTimeMillis() + expireMinutes() * 60_000L
 }

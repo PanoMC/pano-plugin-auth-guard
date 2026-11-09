@@ -63,6 +63,7 @@ class AuthGuardPlugin : PanoPlugin() {
         pluginDatabaseManager.initialize(this)
 
         // Register custom token types (host unregisters on plugin unload)
+        MagicLoginTokenType.configuredMinutes = { configManager.config.magicLoginLinkExpireMinutes }
         tokenTypeRegistry.registerPluginToken(pluginId, MagicLoginTokenType)
 
         logger.info("Started!")

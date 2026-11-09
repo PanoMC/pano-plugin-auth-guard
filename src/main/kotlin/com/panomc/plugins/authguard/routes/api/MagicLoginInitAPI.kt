@@ -96,7 +96,7 @@ class MagicLoginInitAPI(
         // Invalidate old magic login tokens for this user
         tokenProvider.invalidateTokensBySubjectAndType(userId.toString(), MagicLoginTokenType, sqlClient)
 
-        // Generate new token (expiration is defined by MagicLoginTokenType = 15 min)
+        // Generate new token (expiration is the magicLoginLinkExpireMinutes setting)
         val (token, expireDate) = tokenProvider.generateToken(
             userId.toString(),
             MagicLoginTokenType

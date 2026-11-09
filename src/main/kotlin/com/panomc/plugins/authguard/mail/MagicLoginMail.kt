@@ -14,7 +14,7 @@ class MagicLoginMail(
         mapOf(
             "username" to username,
             "magicLoginLink" to magicLoginLink(system),
-            "expireMinutes" to MagicLoginTokenType.EXPIRE_MINUTES
+            "expireMinutes" to MagicLoginTokenType.expireMinutes()
         )
 
     /** Where the visitor opens the session: target `auth-guard.magic-login` of the front-end URL map (frontend-targets.json). */

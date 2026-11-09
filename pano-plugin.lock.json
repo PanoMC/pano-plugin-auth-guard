@@ -43,7 +43,13 @@
         "auth-guard-magic-login-verify-page__back-to-login",
         "auth-guard-magic-login-verify-page__bounce-in",
         "auth-guard-magic-login-verify-page__icon",
-        "auth-guard-magic-login-verify-page__shake"
+        "auth-guard-magic-login-verify-page__shake",
+        "auth-guard-magic-login-verify-page__totp",
+        "auth-guard-magic-login-verify-page__totp-description",
+        "auth-guard-magic-login-verify-page__totp-error",
+        "auth-guard-magic-login-verify-page__totp-input",
+        "auth-guard-magic-login-verify-page__totp-submit",
+        "auth-guard-magic-login-verify-page__totp-title"
       ],
       "contract": 1,
       "hooks": [],

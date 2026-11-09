@@ -13,6 +13,7 @@ import com.panomc.plugins.authguard.db.dao.TwoFactorSecretDao
 import com.panomc.plugins.authguard.service.CaptchaStepTokenService
 import com.panomc.plugins.authguard.service.CaptchaVerificationService
 import com.panomc.plugins.authguard.service.TwoFactorService
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import io.vertx.sqlclient.SqlClient
 
@@ -173,7 +174,8 @@ class AuthGuardAuthEventListener(
         sqlClient: SqlClient
     ): AuthEventListener.LoginDecision? {
         val config = configManager.config
-        val body = context.body().asJsonObject()
+        // A GET entry (the magic login link) has no body.
+        val body = runCatching { context.body()?.asJsonObject() }.getOrNull() ?: JsonObject()
 
         if (config.twoFactorEnabled) {
             val twoFactorSecret = twoFactorSecretDao.getByUserId(user.id, sqlClient)

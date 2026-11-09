@@ -51,6 +51,30 @@
     </div>
     <h5>{$_('magic-login.success')}</h5>
     <p class="text-muted small">{$_('magic-login.verifying')}</p>
+  {:else if state === 'totp'}
+    <form class="auth-guard-magic-login-verify-page__totp" onsubmit={(e) => { e.preventDefault(); submitTotp(); }}>
+      <h5 class="auth-guard-magic-login-verify-page__totp-title"><i class="fas fa-shield-halved me-2"></i>{$_('two-factor.login-title')}</h5>
+      <p class="auth-guard-magic-login-verify-page__totp-description text-muted small">{$_('two-factor.login-desc')}</p>
+      <input
+        class="auth-guard-magic-login-verify-page__totp-input form-control text-center"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        placeholder="000000"
+        bind:value={totpCode}
+        oninput={onTotpInput}
+        disabled={verifying} />
+      {#if totpError}
+        <div class="auth-guard-magic-login-verify-page__totp-error text-danger small mt-2">{totpError}</div>
+      {/if}
+      <button
+        class="auth-guard-magic-login-verify-page__totp-submit btn btn-secondary mt-3"
+        type="submit"
+        disabled={verifying || totpCode.length !== 6}>
+        {$_('two-factor.login-verify')}
+      </button>
+    </form>
   {:else if state === 'no-panel-access'}
     <div class="auth-guard-magic-login-verify-page__icon is-error auth-guard-magic-login-verify-page__shake">
       <i class="fas fa-times-circle"></i>
@@ -93,14 +117,89 @@
   // plugin translations: $_('key') reads plugins.pano-plugin-auth-guard.key
   const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-auth-guard.${key}`, options));
 
-  let state = $state('loading'); // loading, success, expired, error, no-panel-access
+  let state = $state('loading'); // loading, totp, success, expired, error, no-panel-access
+  let token = null;
+  let totpCode = $state('');
+  let totpError = $state('');
+  let verifying = $state(false);
 
   // On a SERVERS install this page is served by the panel, which has its own sign-in page.
   const loginHref = pano?.isPanel ? '/panel/login' : '/login';
 
+  const TWO_FACTOR_REQUIRED_REASON = 'plugins.pano-plugin-auth-guard.errors.two-factor-required';
+
+  function deniedReason(body) {
+    return body?.error?.code === 'PLUGIN_DENIED_LOGIN' ? body.error.details?.reason : null;
+  }
+
+  // POST, so a mail scanner following the link with a GET cannot use it up. The 2FA code, once asked for, goes
+  // in the same request.
+  async function send(extra = {}) {
+    const res = await fetch('/api/plugins/pano-plugin-auth-guard/magic-login/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, ...extra }),
+    });
+    return res.json();
+  }
+
+  async function handle(body) {
+    if (!body.error) {
+      state = 'success';
+
+      // The panel checks panel access and opens the dashboard itself.
+      if (pano?.isPanel && pano.ui.auth?.login?.complete) {
+        const result = await pano.ui.auth.login.complete(body.csrfToken);
+        if (result === 'NO_PANEL_ACCESS') {
+          state = 'no-panel-access';
+        }
+        return;
+      }
+
+      // Redirect to home after a short delay — full page load picks up the new session
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+      return;
+    }
+
+    const reason = deniedReason(body);
+    if (reason === TWO_FACTOR_REQUIRED_REASON || reason === 'TWO_FACTOR_REQUIRED') {
+      state = 'totp';
+      return;
+    }
+    if (state === 'totp' && reason) {
+      totpCode = '';
+      totpError = $_(reason.replace('plugins.pano-plugin-auth-guard.', ''));
+      return;
+    }
+
+    state = body.error?.code === 'MAGIC_LOGIN_LINK_EXPIRED' ? 'expired' : 'error';
+  }
+
+  function onTotpInput() {
+    totpError = '';
+    totpCode = totpCode.replace(/\D/g, '').slice(0, 6);
+    if (totpCode.length === 6) {
+      submitTotp();
+    }
+  }
+
+  async function submitTotp() {
+    if (totpCode.length !== 6 || verifying) return;
+    verifying = true;
+    try {
+      await handle(await send({ totpCode }));
+    } catch (e) {
+      console.error('[auth-guard] Magic login verify failed', e);
+      state = 'error';
+    }
+    verifying = false;
+  }
+
   onMount(async () => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+    token = params.get('token');
 
     if (!token) {
       state = 'error';
@@ -108,30 +207,7 @@
     }
 
     try {
-      const res = await fetch(`/api/plugins/pano-plugin-auth-guard/magic-login/verify?token=${encodeURIComponent(token)}`);
-      const body = await res.json();
-
-      if (!body.error) {
-        state = 'success';
-
-        // The panel checks panel access and opens the dashboard itself.
-        if (pano?.isPanel && pano.ui.auth?.login?.complete) {
-          const result = await pano.ui.auth.login.complete(body.csrfToken);
-          if (result === 'NO_PANEL_ACCESS') {
-            state = 'no-panel-access';
-          }
-          return;
-        }
-
-        // Redirect to home after a short delay — full page load picks up the new session
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
-      } else if (body.error?.code === 'MAGIC_LOGIN_LINK_EXPIRED') {
-        state = 'expired';
-      } else {
-        state = 'error';
-      }
+      await handle(await send());
     } catch (e) {
       console.error('[auth-guard] Magic login verify failed', e);
       state = 'error';

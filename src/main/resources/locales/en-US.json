@@ -62,6 +62,7 @@
     "verifying": "Verifying...",
     "setup-success": "Two-factor authentication has been enabled!",
     "setup-failed": "Invalid code. Please try again.",
+    "setup-password-failed": "Wrong password.",
     "disable-title": "Disable Two-Factor Authentication",
     "disable-desc": "Enter your current 2FA code and password to disable.",
     "disable-code-label": "2FA Code",

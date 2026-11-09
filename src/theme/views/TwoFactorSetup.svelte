@@ -111,9 +111,19 @@
             oninput={onCodeInput}
             disabled={verifyLoading} />
 
+          <label class="auth-guard-two-factor-setup__setup-password-label form-label mb-0" for="setupPassword">{$_('two-factor.disable-password-label')}</label>
+          <input
+            type="password"
+            class="auth-guard-two-factor-setup__setup-password form-control"
+            id="setupPassword"
+            autocomplete="current-password"
+            bind:value={setupPassword}
+            oninput={() => { verifyError = false; }}
+            disabled={verifyLoading} />
+
           {#if verifyError}
             <div class="text-danger small auth-guard-two-factor-setup__shake">
-              {$_('two-factor.setup-failed')}
+              {$_(verifyError === 'password' ? 'two-factor.setup-password-failed' : 'two-factor.setup-failed')}
             </div>
           {/if}
 
@@ -121,7 +131,7 @@
             class="auth-guard-two-factor-setup__verifying btn btn-secondary"
             type="button"
             onclick={verifySetup}
-            disabled={verifyLoading || verifyCode.length !== 6}>
+            disabled={verifyLoading || verifyCode.length !== 6 || !setupPassword}>
             {#if verifyLoading}
               <span class="spinner-border spinner-border-sm me-1" role="status"></span>
               {$_('two-factor.verifying')}
@@ -249,7 +259,8 @@
   let secretDisplay = $state('');
   let verifyCode = $state('');
   let verifyLoading = $state(false);
-  let verifyError = $state(false);
+  let verifyError = $state(false); // false, true (wrong code) or 'password'
+  let setupPassword = $state('');
 
   // Disable state
   let showDisableModal = $state(false);
@@ -296,19 +307,20 @@
   }
 
   async function verifySetup() {
-    if (verifyCode.length !== 6) return;
+    if (verifyCode.length !== 6 || !setupPassword) return;
     verifyLoading = true;
     verifyError = false;
     try {
       const res = await api.post({
         path: '/2fa/verify-setup',
-        body: { code: verifyCode },
+        body: { code: verifyCode, password: setupPassword },
       });
       if (!res.error && res.valid) {
         setupStep = 'done';
         isEnabled = true;
+        setupPassword = '';
       } else {
-        verifyError = true;
+        verifyError = res.error?.code === 'NO_PERMISSION' ? 'password' : true;
       }
     } catch (e) {
       verifyError = true;

@@ -95,6 +95,8 @@
         "auth-guard-two-factor-setup__qr-image",
         "auth-guard-two-factor-setup__secret",
         "auth-guard-two-factor-setup__setup-button",
+        "auth-guard-two-factor-setup__setup-password",
+        "auth-guard-two-factor-setup__setup-password-label",
         "auth-guard-two-factor-setup__setup-success",
         "auth-guard-two-factor-setup__shake",
         "auth-guard-two-factor-setup__title",

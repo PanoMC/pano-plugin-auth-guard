@@ -19,6 +19,7 @@ import io.vertx.json.schema.SchemaRepository
 import io.vertx.json.schema.common.dsl.Schemas.*
 import com.panomc.platform.schema.EndpointDoc
 import com.panomc.platform.error.BadRequest
+import com.panomc.platform.error.NoPermission
 
 @Endpoint
 class TwoFactorSetupVerifyAPI(
@@ -27,12 +28,12 @@ class TwoFactorSetupVerifyAPI(
     override val paths = listOf(Path("/2fa/verify-setup", RouteType.POST))
 
     override val doc = EndpointDoc(
-        summary = "Finishes 2FA setup with a code from the authenticator app. `valid` is false for a wrong code.",
+        summary = "Finishes 2FA setup with the account password and a code from the authenticator app. `valid` is false for a wrong code.",
         tag = "2fa",
         response = objectSchema()
             .optionalProperty("alreadyEnabled", booleanSchema())
             .optionalProperty("valid", booleanSchema()),
-        errors = listOf(BadRequest::class)
+        errors = listOf(BadRequest::class, NoPermission::class)
     )
 
     private val logger = org.slf4j.LoggerFactory.getLogger(TwoFactorSetupVerifyAPI::class.java)
@@ -63,6 +64,7 @@ class TwoFactorSetupVerifyAPI(
                 Bodies.json(
                     objectSchema()
                         .requiredProperty("code", stringSchema())
+                        .requiredProperty("password", stringSchema())
                 )
             )
             .predicate(RequestPredicate.BODY_REQUIRED)
@@ -77,6 +79,10 @@ class TwoFactorSetupVerifyAPI(
         val parameters = getParameters(context)
         val data = parameters.body().jsonObject
         val code = data.getString("code")
+        val password = data.getString("password")
+
+        // A session alone must not be enough to put a second factor on the account (it would lock the owner out).
+        authProvider.requirePassword(password, context)
 
         val sqlClient = getSqlClient()
         val userId = authProvider.getUserIdFromRoutingContext(context)

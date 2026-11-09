@@ -428,10 +428,14 @@
                 "properties": {
                   "code": {
                     "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "code"
+                  "code",
+                  "password"
                 ],
                 "type": "object"
               }
@@ -490,7 +494,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Finishes 2FA setup with a code from the authenticator app. `valid` is false for a wrong code.",
+        "summary": "Finishes 2FA setup with the account password and a code from the authenticator app. `valid` is false for a wrong code.",
         "tags": [
           "2fa"
         ],

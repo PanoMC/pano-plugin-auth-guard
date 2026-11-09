@@ -62,6 +62,7 @@
     "verifying": "Doğrulanıyor...",
     "setup-success": "İki faktörlü doğrulama etkinleştirildi!",
     "setup-failed": "Geçersiz kod. Lütfen tekrar deneyin.",
+    "setup-password-failed": "Şifre yanlış.",
     "disable-title": "İki Faktörlü Doğrulamayı Kapat",
     "disable-desc": "Kapatmak için mevcut 2FA kodunuzu ve şifrenizi girin.",
     "disable-code-label": "2FA Kodu",

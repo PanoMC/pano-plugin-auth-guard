@@ -76,8 +76,9 @@ class AuthGuardAuthEventListener(
         // login that runs its own register/login) can set `pano-auth-phase` to "register"/"login"
         // so we don't have to sniff the URI. Falls back to the URI for the core auth routes.
         val phase = context.get<String?>("pano-auth-phase")
-        val uri = context.request().uri()
-        val isRegister = if (phase != null) phase == "register" else uri.contains(registerPath)
+        // The path alone, never the query string: `?x=/api/v1/auth/register` must not pick another flow's setting.
+        val uri = context.normalizedPath().trimEnd('/')
+        val isRegister = if (phase != null) phase == "register" else uri == registerPath
         if (isRegister) {
             if (!config.captchaOnRegister) {
                 return null
@@ -126,17 +127,17 @@ class AuthGuardAuthEventListener(
     }
 
     private fun isUnauthenticatedCaptchaPath(uri: String) =
-        uri.contains(resetPasswordPath) ||
-            uri.contains(verifyEmailPath) ||
-            uri.contains(verifyNewEmailPath) ||
-            uri.contains(renewPasswordPath)
+        uri == resetPasswordPath ||
+            uri == verifyEmailPath ||
+            uri == verifyNewEmailPath ||
+            uri == renewPasswordPath
 
     private fun captchaEnabledForPasswordlessPath(config: AuthGuardConfig, uri: String): Boolean {
         return when {
-            uri.contains(resetPasswordPath) -> config.captchaOnResetPassword
-            uri.contains(verifyEmailPath) -> config.captchaOnVerifyEmail
-            uri.contains(verifyNewEmailPath) -> config.captchaOnVerifyNewEmail
-            uri.contains(renewPasswordPath) -> config.captchaOnRenewPassword
+            uri == resetPasswordPath -> config.captchaOnResetPassword
+            uri == verifyEmailPath -> config.captchaOnVerifyEmail
+            uri == verifyNewEmailPath -> config.captchaOnVerifyNewEmail
+            uri == renewPasswordPath -> config.captchaOnRenewPassword
             else -> false
         }
     }

@@ -3,6 +3,7 @@ package com.panomc.plugins.authguard.routes.panel
 import com.panomc.platform.annotation.Endpoint
 import com.panomc.platform.auth.AuthProvider
 import com.panomc.platform.db.DatabaseManager
+import com.panomc.platform.error.NoPermission
 import com.panomc.platform.error.NotExists
 import com.panomc.platform.model.*
 import com.panomc.plugins.authguard.AuthGuardPlugin
@@ -47,6 +48,13 @@ class PanelPlayerTwoFactorAdminResetAPI(
         val sqlClient = getSqlClient()
 
         val userId = databaseManager.userDao.getUserIdFromUsername(username, sqlClient) ?: throw NotExists()
+
+        // Only an admin may change the two-factor state of an admin.
+        if (authProvider.isUserAdmin(userId) &&
+            !authProvider.isUserAdmin(authProvider.getUserIdFromRoutingContext(context))
+        ) {
+            throw NoPermission()
+        }
 
         val row = twoFactorSecretDao.getByUserId(userId, sqlClient)
         if (row == null) {

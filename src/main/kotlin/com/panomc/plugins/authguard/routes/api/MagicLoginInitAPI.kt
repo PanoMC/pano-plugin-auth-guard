@@ -12,6 +12,9 @@ import com.panomc.plugins.authguard.config.AuthGuardConfig
 import com.panomc.plugins.authguard.mail.MagicLoginMail
 import com.panomc.plugins.authguard.token.MagicLoginTokenType
 import io.vertx.ext.web.RoutingContext
+import io.vertx.kotlin.coroutines.dispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import io.vertx.ext.web.validation.RequestPredicate
 import io.vertx.ext.web.validation.ValidationHandler
 import com.panomc.platform.schema.dsl.Bodies
@@ -81,6 +84,13 @@ class MagicLoginInitAPI(
             return Successful()
         }
 
+        // One mail per account per cooldown: a flood of requests can neither fill the mailbox nor keep killing the
+        // link the user is about to click.
+        val lastToken = databaseManager.tokenDao.getLastBySubjectAndType(userId.toString(), MagicLoginTokenType, sqlClient)
+        if (lastToken != null && System.currentTimeMillis() - lastToken.startDate < RESEND_COOLDOWN_MILLIS) {
+            return Successful()
+        }
+
         val username = databaseManager.userDao.getUsernameFromUserId(userId, sqlClient)!!
 
         // Invalidate old magic login tokens for this user
@@ -94,13 +104,23 @@ class MagicLoginInitAPI(
 
         tokenProvider.saveToken(token, userId.toString(), MagicLoginTokenType, expireDate, sqlClient)
 
-        // Send magic login email
-        mailManager.sendTemplate(
-            sqlClient,
-            userId,
-            MagicLoginMail(token, username, email)
-        )
+        // Send the mail in the background, so the answer takes as long for a known address as for an unknown one.
+        CoroutineScope(context.vertx().dispatcher()).launch {
+            try {
+                mailManager.sendTemplate(
+                    sqlClient,
+                    userId,
+                    MagicLoginMail(token, username, email)
+                )
+            } catch (e: Exception) {
+                plugin.logger.error("Failed to send the magic login mail", e)
+            }
+        }
 
         return Successful()
+    }
+
+    companion object {
+        const val RESEND_COOLDOWN_MILLIS = 60 * 1000L
     }
 }

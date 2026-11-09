@@ -82,7 +82,7 @@ class TwoFactorDisableAPI(
         }
 
         // Verify the code before disabling
-        if (!twoFactorService.verifyCode(twoFactorSecret.secret, code)) {
+        if (!twoFactorService.verifyCode(userId, twoFactorSecret.secret, code)) {
             return Successful(mapOf("valid" to false))
         }
 

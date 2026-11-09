@@ -200,7 +200,14 @@ class AuthGuardAuthEventListener(
                     )
                 }
 
-                if (!twoFactorService.verifyCode(twoFactorSecret.secret, totpCode)) {
+                if (twoFactorService.isLockedOut(user.id)) {
+                    return AuthEventListener.LoginDecision.Deny(
+                        "TWO_FACTOR_TOO_MANY_ATTEMPTS",
+                        mapOf("reason" to "plugins.pano-plugin-auth-guard.errors.two-factor-too-many-attempts")
+                    )
+                }
+
+                if (!twoFactorService.verifyCode(user.id, twoFactorSecret.secret, totpCode)) {
                     return AuthEventListener.LoginDecision.Deny(
                         "TWO_FACTOR_INVALID_CODE",
                         mapOf("reason" to "plugins.pano-plugin-auth-guard.errors.two-factor-invalid-code")

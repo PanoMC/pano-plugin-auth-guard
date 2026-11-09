@@ -96,7 +96,7 @@ class TwoFactorSetupVerifyAPI(
         }
 
         // Verify the code
-        if (!twoFactorService.verifyCode(twoFactorSecret.secret, code)) {
+        if (!twoFactorService.verifyCode(userId, twoFactorSecret.secret, code)) {
             return Successful(mapOf("valid" to false))
         }
 

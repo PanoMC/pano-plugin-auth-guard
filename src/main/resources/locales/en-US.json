@@ -42,7 +42,8 @@
   "errors": {
     "captcha-verification-failed": "Please verify that you are not a robot.",
     "two-factor-required": "Two-factor authentication is required. Enter the 6-digit code from your authenticator app.",
-    "two-factor-invalid-code": "Invalid two-factor authentication code."
+    "two-factor-invalid-code": "Invalid two-factor authentication code.",
+    "two-factor-too-many-attempts": "Too many wrong codes. Wait a few minutes, then try again."
   },
   "captcha": {
     "error": "Please complete the captcha verification."

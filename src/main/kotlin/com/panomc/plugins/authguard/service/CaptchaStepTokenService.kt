@@ -13,10 +13,16 @@ class CaptchaStepTokenService {
     private val encoder = Base64.getUrlEncoder().withoutPadding()
     private val entries = ConcurrentHashMap<String, StepEntry>()
 
+    companion object {
+        /** How many requests one token may stand in for the captcha: the 2FA step plus a few retries. */
+        const val MAX_USES = 5
+    }
+
     data class StepEntry(
         val userId: Long,
         val loginKey: String,
-        val expiresAtMs: Long
+        val expiresAtMs: Long,
+        val uses: Int = 0
     )
 
     private fun normalizeLoginKey(s: String) = s.trim().lowercase()
@@ -36,16 +42,23 @@ class CaptchaStepTokenService {
      */
     fun mint(userId: Long, usernameOrEmail: String, ttlMs: Long = 5 * 60 * 1000L): String {
         purgeExpired()
+        val loginKey = normalizeLoginKey(usernameOrEmail)
+
+        // One live token per user and login: asking again hands back the same token, so its use count is not reset.
+        entries.entries.firstOrNull { it.value.userId == userId && it.value.loginKey == loginKey }?.let {
+            return it.key
+        }
+
         val tokenBytes = ByteArray(32)
         random.nextBytes(tokenBytes)
         val token = encoder.encodeToString(tokenBytes)
-        val loginKey = normalizeLoginKey(usernameOrEmail)
         entries[token] = StepEntry(userId, loginKey, System.currentTimeMillis() + ttlMs)
         return token
     }
 
     /**
-     * Returns true if the token is valid for this login identifier (multi-use until expiry or [clearForUserId]).
+     * Returns true if the token is valid for this login identifier. Each call uses it once; it is gone after
+     * [MAX_USES] uses, on expiry or on [clearForUserId].
      */
     fun isValid(token: String?, usernameOrEmail: String): Boolean {
         if (token.isNullOrBlank()) return false
@@ -55,7 +68,13 @@ class CaptchaStepTokenService {
             entries.remove(token, entry)
             return false
         }
-        return normalizeLoginKey(usernameOrEmail) == entry.loginKey
+        if (normalizeLoginKey(usernameOrEmail) != entry.loginKey) return false
+
+        val used = entry.copy(uses = entry.uses + 1)
+        if (used.uses >= MAX_USES) {
+            return entries.remove(token, entry)
+        }
+        return entries.replace(token, entry, used)
     }
 
     fun clearForUserId(userId: Long) {

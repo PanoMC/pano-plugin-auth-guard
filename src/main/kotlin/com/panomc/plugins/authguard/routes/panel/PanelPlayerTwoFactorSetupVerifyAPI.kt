@@ -91,7 +91,7 @@ class PanelPlayerTwoFactorSetupVerifyAPI(
             return Successful(mapOf("alreadyEnabled" to true, "valid" to true))
         }
 
-        if (!twoFactorService.verifyCode(twoFactorSecret.secret, code)) {
+        if (!twoFactorService.verifyCode(userId, twoFactorSecret.secret, code)) {
             return Successful(mapOf("valid" to false))
         }
 

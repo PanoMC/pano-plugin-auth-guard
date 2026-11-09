@@ -42,7 +42,8 @@
   "errors": {
     "captcha-verification-failed": "Lütfen robot olmadığınızı doğrulayın.",
     "two-factor-required": "İki faktörlü doğrulama gerekiyor. Doğrulama uygulamanızdaki 6 haneli kodu girin.",
-    "two-factor-invalid-code": "Geçersiz iki faktörlü doğrulama kodu."
+    "two-factor-invalid-code": "Geçersiz iki faktörlü doğrulama kodu.",
+    "two-factor-too-many-attempts": "Çok fazla hatalı kod girildi. Birkaç dakika bekleyip tekrar deneyin."
   },
   "captcha": {
     "error": "Lütfen captcha doğrulamasını tamamlayın."

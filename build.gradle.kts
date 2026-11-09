@@ -124,6 +124,9 @@ dependencies {
     testImplementation("org.pf4j:pf4j:${pf4jVersion}")
     testImplementation("org.springframework:spring-context:${springContextVersion}")
 
+    // Draws the 2FA setup QR code on the server (the secret never leaves Pano)
+    implementation("io.nayuki:qrcodegen:1.8.0")
+
     // https://mvnrepository.com/artifact/dev.turingcomplete/kotlin-onetimepassword
     implementation("dev.turingcomplete:kotlin-onetimepassword:3.0.0") {
         exclude(group = "org.jetbrains.kotlin")

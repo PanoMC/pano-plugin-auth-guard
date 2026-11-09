@@ -10,6 +10,7 @@ import com.panomc.plugins.authguard.AuthGuardPlugin
 import com.panomc.plugins.authguard.config.AuthGuardConfig
 import com.panomc.plugins.authguard.db.dao.TwoFactorSecretDao
 import com.panomc.plugins.authguard.db.model.TwoFactorSecret
+import com.panomc.plugins.authguard.service.QrCodeRenderer
 import com.panomc.plugins.authguard.service.TwoFactorService
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.validation.ValidationHandler
@@ -32,6 +33,7 @@ class TwoFactorSetupInitAPI(
             .optionalProperty("alreadyEnabled", booleanSchema())
             .optionalProperty("secret", stringSchema())
             .optionalProperty("totpUri", stringSchema())
+            .optionalProperty("qrCode", stringSchema())
             .optionalProperty("issuer", stringSchema())
             .optionalProperty("username", stringSchema()),
         errors = listOf(BadRequest::class)
@@ -112,6 +114,7 @@ class TwoFactorSetupInitAPI(
             mapOf(
                 "secret" to secret,
                 "totpUri" to totpUri,
+                "qrCode" to QrCodeRenderer.svgDataUrl(totpUri),
                 "issuer" to issuer,
                 "username" to username
             )

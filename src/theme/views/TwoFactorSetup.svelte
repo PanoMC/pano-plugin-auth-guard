@@ -290,8 +290,8 @@
           setupLoading = false;
           return;
         }
-        // Generate QR code as data URL using a simple QR API
-        qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(res.totpUri)}`;
+        // Drawn by the plugin itself: the URI carries the secret, so it is not sent to a QR service.
+        qrDataUrl = res.qrCode;
         secretDisplay = res.secret;
         setupStep = 'scan';
       }

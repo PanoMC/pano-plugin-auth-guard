@@ -291,6 +291,9 @@
                     "issuer": {
                       "type": "string"
                     },
+                    "qrCode": {
+                      "type": "string"
+                    },
                     "secret": {
                       "type": "string"
                     },

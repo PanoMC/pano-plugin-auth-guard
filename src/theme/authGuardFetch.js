@@ -13,8 +13,8 @@ const AUTH_CAPTCHA_INJECT = [
   '/api/v1/auth/renew-password',
   // Plugin-driven auth flows that run the core auth hooks (e.g. social login) get the captcha
   // token too, so captcha enforced server-side on these is satisfiable client-side.
-  '/api/plugins/pano-plugin-social-login/social-login/register',
-  '/api/plugins/pano-plugin-social-login/social-login/link-existing',
+  '/api/plugins/pano-plugin-social-login/register',
+  '/api/plugins/pano-plugin-social-login/link-existing',
 ];
 
 let responseHandler = null;

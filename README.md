@@ -13,7 +13,8 @@
 
 Auth Guard keeps bots and account thieves away from your Pano website. Add a captcha to your sign-in and sign-up forms, let players protect their accounts with an authenticator app, and offer password-free sign-in with a one-time email link. Every feature is a simple switch in your panel.
 
-## ✨ Features
+<h3 align="center">Features</h3>
+
 - 🤖 **Bot protection**: Add a captcha from popular services like Google reCAPTCHA or hCaptcha to stop spam sign-ups.
 - 🎯 **You choose where**: Turn the captcha on or off for sign-in, sign-up, password reset and email confirmation.
 - 🔐 **Two-factor authentication**: Players secure their account with any authenticator app by scanning a QR code.
@@ -23,7 +24,7 @@ Auth Guard keeps bots and account thieves away from your Pano website. Add a cap
 - 🛠️ **Help for locked-out players**: Staff can check and remove a player's 2FA from the player page.
 - 📋 **Activity log**: Settings changes and 2FA changes are recorded in your panel logs.
 
-## 📸 Screenshots
+<h3 align="center">Screenshots</h3>
 
 <p align="center"><img src=".github/assets/two-factor-setup.png" alt="Two-factor setup in the player's account settings" width="700" /></p>
 <p align="center"><i>Players turn on two-factor authentication from their account settings in a few seconds.</i></p>
@@ -31,13 +32,16 @@ Auth Guard keeps bots and account thieves away from your Pano website. Add a cap
 <p align="center"><img src=".github/assets/panel.png" alt="Auth Guard settings in the Pano panel" width="900" /></p>
 <p align="center"><i>Pick a captcha service and switch features on from one settings page.</i></p>
 
-## 🚀 Get started
+<h3 align="center">Get started</h3>
+
 1. Open your Pano panel and go to **Addons**.
 2. Find **Auth Guard** and click **Install**.
 3. Open the addon's **Settings** tab and switch on the protections you want.
 
-## 💬 Support
+<h3 align="center">Support</h3>
+
 Questions or ideas? Join our [Discord](https://panomc.com/discord) or visit [panomc.com](https://panomc.com).
 
-## 📄 License
+<h3 align="center">License</h3>
+
 Released under the MIT License.

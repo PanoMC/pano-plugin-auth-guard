@@ -93,11 +93,11 @@
   },
   "panel-2fa": {
     "title": "Two-Factor Authentication",
-    "edit-desc": "Set up, verify, or remove 2FA for this player. Site-wide 2FA must be enabled in Auth Guard settings first.",
     "sidebar-title": "2FA",
     "on": "Enabled",
     "off": "Not set up",
-    "global-off": "2FA is disabled in Auth Guard settings, so you cannot change it for players here.",
+    "global-off-title": "2FA Disabled",
+    "global-off": "Global 2FA is disabled; player-level overrides are unavailable.",
     "global-off-sidebar": "2FA is disabled in Auth Guard settings.",
     "setup-pending": "Setup not finished",
     "status-label": "2FA",

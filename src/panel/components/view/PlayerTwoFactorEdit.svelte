@@ -1,18 +1,19 @@
 <div class="pt-2 pb-3 mb-3 border-bottom animate__animated animate__fadeIn">
-  <div class="d-flex align-items-center gap-2 mb-1">
-    <i class="fas fa-user-shield text-secondary"></i>
+  <div class="mb-1">
     <span class="fw-bold">{$_('panel-2fa.title')}</span>
   </div>
-  <p class="text-secondary small mb-3">{$_('panel-2fa.edit-desc')}</p>
 
   {#if loading}
     <div class="d-flex align-items-center gap-2">
       <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
     </div>
   {:else if !globalEnabled}
-    <div class="alert alert-secondary small mb-0" role="alert">
-      <i class="fas fa-info-circle me-1"></i>
-      {$_('panel-2fa.global-off')}
+    <div class="alert alert-secondary d-flex align-items-start mb-0" role="alert">
+      <i class="fa-solid fa-circle-info me-3 mt-1" aria-hidden="true"></i>
+      <div>
+        <h5 class="alert-heading mb-2">{$_('panel-2fa.global-off-title')}</h5>
+        <div>{$_('panel-2fa.global-off')}</div>
+      </div>
     </div>
   {:else if twoFactorEnabled}
     <div class="d-flex flex-wrap align-items-center gap-2">

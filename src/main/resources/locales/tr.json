@@ -93,11 +93,11 @@
   },
   "panel-2fa": {
     "title": "İki faktörlü doğrulama",
-    "edit-desc": "Bu oyuncu için 2FA kurun, doğrulayın veya kaldırın. Önce site genelinde 2FA’nın Auth Guard ayarlarından açık olması gerekir.",
     "sidebar-title": "2FA",
     "on": "Açık",
     "off": "Kurulu değil",
-    "global-off": "2FA Auth Guard ayarlarında kapalı; bu yüzden oyuncular için burada değişiklik yapılamaz.",
+    "global-off-title": "2FA Kapalı",
+    "global-off": "Site genelinde 2FA kapalı; oyuncu bazlı geçersiz kılmalar kullanılamaz.",
     "global-off-sidebar": "2FA Auth Guard ayarlarında kapalı.",
     "setup-pending": "Kurulum yarım kaldı",
     "status-label": "2FA",

@@ -10,7 +10,7 @@ import com.panomc.plugins.authguard.service.CaptchaStepTokenService
 import com.panomc.plugins.authguard.service.CaptchaVerificationService
 import com.panomc.plugins.authguard.service.TwoFactorService
 import com.panomc.plugins.authguard.token.MagicLoginTokenType
-import io.vertx.core.Vertx
+import io.vertx.ext.web.client.WebClient
 
 class AuthGuardPlugin : PanoPlugin() {
     private val pluginDatabaseManager by lazy {
@@ -48,8 +48,7 @@ class AuthGuardPlugin : PanoPlugin() {
         pluginBeanContext.beanFactory.registerSingleton(PluginConfigManager::class.java.name, configManager)
 
         // Register services
-        val vertx = applicationContext.getBean(Vertx::class.java)
-        val captchaService = CaptchaVerificationService(configManager, vertx)
+        val captchaService = CaptchaVerificationService(configManager, applicationContext.getBean(WebClient::class.java))
         pluginBeanContext.beanFactory.registerSingleton(CaptchaVerificationService::class.java.name, captchaService)
 
         val captchaStepTokenService = CaptchaStepTokenService()

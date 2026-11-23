@@ -3,18 +3,17 @@ package com.panomc.plugins.authguard.service
 import com.panomc.platform.api.config.PluginConfigManager
 import com.panomc.plugins.authguard.config.AuthGuardConfig
 import com.panomc.plugins.authguard.config.CaptchaProvider
-import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.client.WebClient
-import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.kotlin.coroutines.coAwait
 import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 
 class CaptchaVerificationService(
     private val configManager: PluginConfigManager<AuthGuardConfig>,
-    vertx: Vertx
+    // Core's shared client: never closed here, the host owns it.
+    private val webClient: WebClient
 ) {
     companion object {
         private const val RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
@@ -75,10 +74,6 @@ class CaptchaVerificationService(
     }
 
     private val logger = LoggerFactory.getLogger("AuthGuard-Captcha")
-
-    private val webClient by lazy {
-        WebClient.create(vertx, WebClientOptions().setSsl(true).setTrustAll(false))
-    }
 
     suspend fun verify(token: String?, remoteIp: String?): Boolean {
         val config = configManager.config

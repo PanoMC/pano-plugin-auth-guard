@@ -23,10 +23,10 @@
     "captcha-on-register-desc": "Требовать проверку CAPTCHA на форме регистрации.",
     "captcha-on-reset-password": "CAPTCHA при сбросе пароля",
     "captcha-on-reset-password-desc": "Требовать проверку CAPTCHA на форме «Забыли пароль» и сброса пароля.",
-    "captcha-on-verify-email": "CAPTCHA при подтверждении email",
-    "captcha-on-verify-email-desc": "Требовать CAPTCHA на странице активации аккаунта (подтверждение email / код).",
-    "captcha-on-verify-new-email": "CAPTCHA при смене email",
-    "captcha-on-verify-new-email-desc": "Требовать CAPTCHA при подтверждении нового адреса электронной почты.",
+    "captcha-on-verify-email": "CAPTCHA при подтверждении e-mail",
+    "captcha-on-verify-email-desc": "Требовать CAPTCHA на странице активации аккаунта (подтверждение e-mail / код).",
+    "captcha-on-verify-new-email": "CAPTCHA при смене e-mail",
+    "captcha-on-verify-new-email-desc": "Требовать CAPTCHA при подтверждении нового адреса e-mail.",
     "captcha-on-renew-password": "CAPTCHA при установке / смене пароля",
     "captcha-on-renew-password-desc": "Требовать CAPTCHA на форме установки или смены пароля (например, по ссылке из письма).",
     "two-factor-enabled": "Включить двухфакторную аутентификацию",
@@ -34,10 +34,11 @@
     "two-factor-issuer": "Имя издателя 2FA",
     "two-factor-issuer-desc": "Имя, отображаемое в приложениях-аутентификаторах. По умолчанию используется название сайта.",
     "magic-login-enabled": "Включить магический вход",
-    "magic-login-enabled-desc": "Позволить пользователям входить через одноразовую ссылку, отправленную на их электронную почту.",
+    "magic-login-enabled-desc": "Позволить пользователям входить через одноразовую ссылку, отправленную на их e-mail.",
     "magic-login-expire": "Срок действия ссылки (минуты)",
-    "magic-login-expire-desc": "Как долго ссылка для магического входа остаётся действительной.",
-    "save": "Сохранить"
+    "magic-login-expire-desc": "Как долго ссылка для магического входа остается действительной.",
+    "save": "Сохранить",
+    "save-error": "Не удалось сохранить настройки."
   },
   "errors": {
     "captcha-verification-failed": "Пожалуйста, подтвердите, что вы не робот.",
@@ -46,7 +47,10 @@
     "two-factor-too-many-attempts": "Слишком много неверных кодов. Подождите несколько минут и попробуйте снова."
   },
   "captcha": {
-    "error": "Пожалуйста, пройдите проверку CAPTCHA."
+    "error": "Пожалуйста, пройдите проверку CAPTCHA.",
+    "load-failed": "Не удалось загрузить CAPTCHA.",
+    "init-failed": "Не удалось запустить CAPTCHA.",
+    "render-failed": "Не удалось показать CAPTCHA."
   },
   "two-factor": {
     "title": "Двухфакторная аутентификация",
@@ -61,7 +65,7 @@
     "verify-button": "Проверить и включить",
     "verifying": "Проверка...",
     "setup-success": "Двухфакторная аутентификация включена!",
-    "setup-failed": "Неверный код. Попробуйте ещё раз.",
+    "setup-failed": "Неверный код. Попробуйте еще раз.",
     "setup-password-failed": "Неверный пароль.",
     "disable-title": "Отключить двухфакторную аутентификацию",
     "disable-desc": "Введите текущий код 2FA и пароль для отключения.",
@@ -75,34 +79,35 @@
     "login-code-label": "Код аутентификации",
     "login-verify": "Проверить",
     "login-cancel": "Отмена",
-    "login-invalid-code": "Неверный код аутентификации. Попробуйте ещё раз."
+    "login-invalid-code": "Неверный код аутентификации. Попробуйте еще раз.",
+    "cancel": "Отмена"
   },
   "magic-login": {
-    "button": "Войти по ссылке из email",
-    "email-label": "Электронная почта",
+    "button": "Войти по ссылке из e-mail",
+    "email-label": "Адрес e-mail",
     "send-button": "Отправить ссылку для входа",
     "sending": "Отправка...",
     "sent-title": "Проверьте вашу почту",
-    "sent-desc": "Мы отправили ссылку для входа на ваш электронный адрес. Нажмите на ссылку для входа.",
+    "sent-desc": "Мы отправили ссылку для входа на ваш e-mail. Нажмите на ссылку для входа.",
     "back-to-login": "Вернуться к входу",
     "verifying": "Проверка ссылки для входа...",
     "success": "Вход выполнен успешно!",
-    "expired": "Срок действия ссылки истёк. Запросите новую.",
-    "error": "Что-то пошло не так. Попробуйте ещё раз.",
-    "no-panel-access": "У этой учётной записи нет доступа к панели управления."
+    "expired": "Срок действия ссылки истек. Запросите новую.",
+    "error": "Что-то пошло не так. Попробуйте еще раз.",
+    "no-panel-access": "У этой учетной записи нет доступа к панели управления."
   },
   "panel-2fa": {
     "title": "Двухфакторная аутентификация",
     "sidebar-title": "2FA",
     "on": "Включена",
     "off": "Не настроена",
-    "global-off-title": "2FA Отключена",
+    "global-off-title": "2FA отключена",
     "global-off": "Глобальная 2FA отключена; изменения на уровне игрока недоступны.",
     "global-off-sidebar": "2FA отключена в настройках Auth Guard.",
     "setup-pending": "Настройка не завершена",
     "status-label": "2FA",
     "remove": "Сбросить 2FA",
-    "remove-confirm": "Сбросить двухфакторную аутентификацию для этого игрока? Пользователь сможет настроить её снова в аккаунте или вы сможете сделать это в панели."
+    "remove-confirm": "Сбросить двухфакторную аутентификацию для этого игрока? Пользователь сможет настроить ее снова в аккаунте или вы сможете сделать это в панели."
   },
   "permissions": {
     "MANAGE_AUTH_GUARD_SETTINGS": {
@@ -115,7 +120,7 @@
     }
   },
   "activity-logs": {
-    "UPDATED_AUTH_GUARD_SETTINGS": "<b>{username}</b> обновил настройки плагина Auth Guard.",
+    "UPDATED_AUTH_GUARD_SETTINGS": "<b>{username}</b> обновил настройки аддона Auth Guard.",
     "TWO_FACTOR_STATUS_CHANGED": "<b>{username}</b> {enabled, select, true {включил} other {отключил}} двухфакторную аутентификацию.",
     "ADMIN_RESET_PLAYER_TWO_FACTOR": "<b>{adminUsername}</b> сбросил 2FA для <b>{targetUsername}</b>."
   },
@@ -129,8 +134,18 @@
       "continue": "Продолжить"
     },
     "errors": {
-      "MAGIC_LOGIN_LINK_EXPIRED": "Срок действия этой ссылки для входа истёк или она уже использована. Запросите новую на странице входа.",
+      "MAGIC_LOGIN_LINK_EXPIRED": "Срок действия этой ссылки для входа истек или она уже использована. Запросите новую на странице входа.",
       "BAD_REQUEST": "Вход по ссылке на этом сайте недоступен."
     }
+  },
+  "a11y": {
+    "edit-secret-key": "Изменить секретный ключ",
+    "toggle-visibility": "Показать / скрыть",
+    "cancel-edit": "Отменить изменение",
+    "edit-project-id": "Изменить ID проекта",
+    "cancel": "Отмена",
+    "cancel-setup": "Отменить настройку",
+    "close": "Закрыть",
+    "qr-code": "QR-код двухфакторной аутентификации"
   }
 }

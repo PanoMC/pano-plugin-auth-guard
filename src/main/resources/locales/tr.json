@@ -13,31 +13,32 @@
     "captcha-secret-key-desc": "Captcha sağlayıcınızın panelinden aldığınız gizli anahtar. reCAPTCHA Enterprise için Google Cloud API anahtarınızı kullanın.",
     "captcha-secret-key-new-placeholder": "Yeni gizli anahtar girin",
     "recaptcha-legacy": "Eski Sürüm Modu",
-    "recaptcha-legacy-desc": "reCAPTCHA Enterprise yerine standart reCAPTCHA API'sini eski gizli anahtar ile kullan.",
+    "recaptcha-legacy-desc": "reCAPTCHA Enterprise yerine eski gizli anahtarla standart reCAPTCHA API'si kullanılır.",
     "captcha-project-id": "Google Cloud Proje ID",
     "captcha-project-id-desc": "Google Cloud proje kimliğiniz (reCAPTCHA Enterprise için gerekli).",
     "captcha-project-id-new-placeholder": "Yeni proje ID girin",
     "captcha-on-login": "Girişte Captcha",
-    "captcha-on-login-desc": "Giriş formunda captcha doğrulaması iste.",
+    "captcha-on-login-desc": "Giriş formunda captcha doğrulaması istenir.",
     "captcha-on-register": "Kayıtta Captcha",
-    "captcha-on-register-desc": "Kayıt formunda captcha doğrulaması iste.",
+    "captcha-on-register-desc": "Kayıt formunda captcha doğrulaması istenir.",
     "captcha-on-reset-password": "Şifre Sıfırlamada Captcha",
-    "captcha-on-reset-password-desc": "Şifremi unuttum / şifre sıfırlama formunda captcha doğrulaması iste.",
+    "captcha-on-reset-password-desc": "Şifremi unuttum / şifre sıfırlama formunda captcha doğrulaması istenir.",
     "captcha-on-verify-email": "E-posta Doğrulamada Captcha",
-    "captcha-on-verify-email-desc": "Hesabı etkinleştirme (e-posta onayı / kod) sayfasında captcha doğrulaması iste.",
+    "captcha-on-verify-email-desc": "Hesabı etkinleştirme (e-posta onayı / kod) sayfasında captcha doğrulaması istenir.",
     "captcha-on-verify-new-email": "Yeni E-posta Onayında Captcha",
-    "captcha-on-verify-new-email-desc": "Kullanıcı yeni e-posta adresini onaylarken captcha doğrulaması iste.",
-    "captcha-on-renew-password": "Parola Belirle / Yenilemede Captcha",
-    "captcha-on-renew-password-desc": "Parola belirleme veya yenileme formunda (bağlantı sonrası) captcha doğrulaması iste.",
+    "captcha-on-verify-new-email-desc": "Kullanıcı yeni e-posta adresini onaylarken captcha doğrulaması istenir.",
+    "captcha-on-renew-password": "Şifre Belirleme / Yenilemede Captcha",
+    "captcha-on-renew-password-desc": "Şifre belirleme veya yenileme formunda (bağlantı sonrası) captcha doğrulaması istenir.",
     "two-factor-enabled": "İki Faktörlü Doğrulamayı Etkinleştir",
-    "two-factor-enabled-desc": "Kullanıcıların hesapları için TOTP tabanlı iki faktörlü doğrulama ayarlamalarına izin ver.",
+    "two-factor-enabled-desc": "Kullanıcıların hesapları için TOTP tabanlı iki faktörlü doğrulama kurmasına izin verir.",
     "two-factor-issuer": "2FA Sağlayıcı Adı",
     "two-factor-issuer-desc": "Doğrulama uygulamalarında gösterilen ad (ör. Google Authenticator). Varsayılan olarak site adınız kullanılır.",
     "magic-login-enabled": "Sihirli Giriş'i Etkinleştir",
-    "magic-login-enabled-desc": "Kullanıcıların e-posta adreslerine gönderilen tek kullanımlık bağlantı ile giriş yapmalarına izin ver.",
+    "magic-login-enabled-desc": "Kullanıcıların e-posta adreslerine gönderilen tek kullanımlık bağlantıyla giriş yapmasına izin verir.",
     "magic-login-expire": "Sihirli Bağlantı Süresi (dakika)",
     "magic-login-expire-desc": "Sihirli giriş bağlantısının ne kadar süre geçerli kalacağı.",
-    "save": "Kaydet"
+    "save": "Kaydet",
+    "save-error": "Ayarlar kaydedilemedi."
   },
   "errors": {
     "captcha-verification-failed": "Lütfen robot olmadığınızı doğrulayın.",
@@ -46,7 +47,10 @@
     "two-factor-too-many-attempts": "Çok fazla hatalı kod girildi. Birkaç dakika bekleyip tekrar deneyin."
   },
   "captcha": {
-    "error": "Lütfen captcha doğrulamasını tamamlayın."
+    "error": "Lütfen captcha doğrulamasını tamamlayın.",
+    "load-failed": "Captcha yüklenemedi.",
+    "init-failed": "Captcha başlatılamadı.",
+    "render-failed": "Captcha gösterilemedi."
   },
   "two-factor": {
     "title": "İki Faktörlü Doğrulama",
@@ -75,7 +79,8 @@
     "login-code-label": "Doğrulama Kodu",
     "login-verify": "Doğrula",
     "login-cancel": "İptal",
-    "login-invalid-code": "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
+    "login-invalid-code": "Geçersiz doğrulama kodu. Lütfen tekrar deneyin.",
+    "cancel": "İptal"
   },
   "magic-login": {
     "button": "E-posta Bağlantısı ile Giriş Yap",
@@ -123,14 +128,24 @@
     "magic-login": {
       "title": "Giriş yap",
       "heading": "Giriş yapılıyor",
-      "lead": "Giriş bağlantın kontrol ediliyor.",
+      "lead": "Giriş bağlantınız kontrol ediliyor.",
       "button": "Giriş yap",
-      "done": "Giriş yaptın.",
+      "done": "Giriş yaptınız.",
       "continue": "Devam et"
     },
     "errors": {
-      "MAGIC_LOGIN_LINK_EXPIRED": "Bu giriş bağlantısının süresi dolmuş ya da zaten kullanılmış. Giriş sayfasından yenisini iste.",
+      "MAGIC_LOGIN_LINK_EXPIRED": "Bu giriş bağlantısının süresi dolmuş ya da zaten kullanılmış. Giriş sayfasından yenisini isteyin.",
       "BAD_REQUEST": "Bağlantıyla giriş bu sitede kullanılamıyor."
     }
+  },
+  "a11y": {
+    "edit-secret-key": "Gizli anahtarı düzenle",
+    "toggle-visibility": "Göster / gizle",
+    "cancel-edit": "Düzenlemeyi iptal et",
+    "edit-project-id": "Proje ID'sini düzenle",
+    "cancel": "İptal",
+    "cancel-setup": "Kurulumu iptal et",
+    "close": "Kapat",
+    "qr-code": "İki faktörlü doğrulama QR kodu"
   }
 }

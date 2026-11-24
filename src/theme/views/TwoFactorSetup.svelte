@@ -91,10 +91,10 @@
     {:else if setupStep === 'scan'}
       <!-- QR code scan step -->
       <div class="auth-guard-two-factor-setup__fade-in position-relative">
-        <button type="button" class="btn-close position-absolute top-0 end-0" aria-label="Cancel setup" onclick={() => { setupStep = 'idle'; verifyCode = ''; }}></button>
+        <button type="button" class="btn-close position-absolute top-0 end-0" aria-label={$_('a11y.cancel-setup')} onclick={() => { setupStep = 'idle'; verifyCode = ''; }}></button>
         <p class="mb-2 fw-semibold pe-4">{$_('two-factor.scan-qr')}</p>
         <div class="auth-guard-two-factor-setup__qr">
-          <img class="auth-guard-two-factor-setup__qr-image" src={qrDataUrl} alt="2FA QR Code" width="200" height="200" />
+          <img class="auth-guard-two-factor-setup__qr-image" src={qrDataUrl} alt={$_('a11y.qr-code')} width="200" height="200" />
         </div>
 
         <p class="mb-1 mt-3 small text-muted">{$_('two-factor.manual-entry')}</p>
@@ -159,7 +159,7 @@
         <form onsubmit={(e) => { e.preventDefault(); disableTwoFactor(); }}>
           <div class="auth-guard-two-factor-setup__disable-title modal-header">
             <h5 class="auth-guard-two-factor-setup__title modal-title">{$_('two-factor.disable-title')}</h5>
-            <button type="button" class="btn-close" aria-label="Close" onclick={() => showDisableModal = false}></button>
+            <button type="button" class="btn-close" aria-label={$_('a11y.close')} onclick={() => showDisableModal = false}></button>
           </div>
           <div class="auth-guard-two-factor-setup__disable-desc modal-body">
             <p class="text-muted">{$_('two-factor.disable-desc')}</p>
@@ -192,7 +192,7 @@
           </div>
           <div class="auth-guard-two-factor-setup__footer modal-footer">
             <button type="button" class="auth-guard-two-factor-setup__action-2 btn btn-link" onclick={() => showDisableModal = false} disabled={disableLoading}>
-              Cancel
+              {$_('two-factor.cancel')}
             </button>
             <button
               type="submit"

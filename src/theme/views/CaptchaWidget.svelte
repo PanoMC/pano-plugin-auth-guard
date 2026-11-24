@@ -16,7 +16,7 @@
     {#if error}
       <div class="auth-guard-captcha-widget__error text-danger">
         <i class="fas fa-exclamation-triangle me-1"></i>
-        {error}
+        {$_(error)}
       </div>
     {:else}
       <div bind:this={widgetContainer}></div>
@@ -26,7 +26,8 @@
 
 <script>
   import { onMount, untrack } from 'svelte';
-  import { get } from 'svelte/store';
+  import { derived, get } from 'svelte/store';
+  import { _ as i18n } from '@panomc/sdk/utils/language';
 
   import { installAuthGuardFetch, isAuthGuardFetchPatched, setAuthGuardFetchResponseHandler } from '../authGuardFetch.js';
   import {
@@ -37,6 +38,9 @@
     loginCaptchaDeferred,
     setLoginCaptchaDeferred,
   } from '../state.js';
+
+  // plugin translations: $_('key') reads plugins.pano-plugin-auth-guard.key
+  const _ = derived(i18n, ($_fn) => (key, options) => $_fn(`plugins.pano-plugin-auth-guard.${key}`, options));
 
   let { data = {} } = $props();
 
@@ -407,7 +411,7 @@
     script.defer = true;
     script.onload = () => waitForApiAndRender();
     script.onerror = () => {
-      error = 'Failed to load captcha script';
+      error = 'captcha.load-failed';
       loading = false;
     };
     document.head.appendChild(script);
@@ -422,7 +426,7 @@
       waited += interval;
       if (waited > maxWait) {
         clearInterval(check);
-        error = 'Captcha failed to initialize';
+        error = 'captcha.init-failed';
         loading = false;
         return;
       }
@@ -495,7 +499,7 @@
       }
     } catch (e) {
       console.error('[auth-guard] Failed to render captcha widget', e);
-      error = 'Failed to render captcha widget';
+      error = 'captcha.render-failed';
     }
   }
 </script>

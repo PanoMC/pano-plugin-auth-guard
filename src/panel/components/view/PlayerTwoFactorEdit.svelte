@@ -64,7 +64,7 @@
       <button
         type="button"
         class="btn-close position-absolute top-0 end-0"
-        aria-label="Cancel"
+        aria-label={$_('a11y.cancel')}
         on:click={cancelScan}
       ></button>
       <p class="mb-2 fw-semibold pe-4">{$_('two-factor.scan-qr')}</p>
@@ -75,7 +75,7 @@
           src={qrDataUrl}
           width="200"
           height="200"
-          alt="2FA"
+          alt={$_('a11y.qr-code')}
         />
       </div>
       <p class="mb-1 mt-2 small text-muted">{$_('two-factor.manual-entry')}</p>

@@ -84,7 +84,7 @@
                 <button
                   class="btn btn-outline-primary btn-sm"
                   type="button"
-                  aria-label="Edit secret key"
+                  aria-label={$_('a11y.edit-secret-key')}
                   onclick={() => { editingSecretKey = true; config.captchaSecretKey = ''; }}>
                   <i class="fas fa-edit"></i>
                 </button>
@@ -100,7 +100,7 @@
                 <button
                   class="btn btn-outline-secondary"
                   type="button"
-                  aria-label="Toggle visibility"
+                  aria-label={$_('a11y.toggle-visibility')}
                   onclick={() => showSecretKey = !showSecretKey}>
                   <i class="fas {showSecretKey ? 'fa-eye-slash' : 'fa-eye'}"></i>
                 </button>
@@ -108,7 +108,7 @@
                   <button
                     class="btn btn-outline-danger"
                     type="button"
-                    aria-label="Cancel edit"
+                    aria-label={$_('a11y.cancel-edit')}
                     onclick={() => { editingSecretKey = false; config.captchaSecretKey = ''; }}>
                     <i class="fas fa-times"></i>
                   </button>
@@ -138,7 +138,7 @@
                   <button
                     class="btn btn-outline-primary btn-sm"
                     type="button"
-                    aria-label="Edit project ID"
+                    aria-label={$_('a11y.edit-project-id')}
                     onclick={() => { editingProjectId = true; config.captchaProjectId = ''; }}>
                     <i class="fas fa-edit"></i>
                   </button>
@@ -155,7 +155,7 @@
                     <button
                       class="btn btn-outline-danger"
                       type="button"
-                      aria-label="Cancel edit"
+                      aria-label={$_('a11y.cancel-edit')}
                       onclick={() => { editingProjectId = false; config.captchaProjectId = ''; }}>
                       <i class="fas fa-times"></i>
                     </button>
@@ -466,7 +466,7 @@
       await showSuccessToast('components.toasts.settings-save-success');
     } catch (e) {
       console.error('Failed to save auth guard config', e);
-      await showErrorToast('components.toasts.settings-save-error');
+      await showErrorToast($_('plugin-settings.save-error'));
     } finally {
       saving = false;
     }

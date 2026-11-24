@@ -37,7 +37,8 @@
     "magic-login-enabled-desc": "Allow users to sign in via a one-time link sent to their email address.",
     "magic-login-expire": "Magic Link Expiration (minutes)",
     "magic-login-expire-desc": "How long the magic login link stays valid.",
-    "save": "Save"
+    "save": "Save",
+    "save-error": "Settings could not be saved."
   },
   "errors": {
     "captcha-verification-failed": "Please verify that you are not a robot.",
@@ -46,7 +47,10 @@
     "two-factor-too-many-attempts": "Too many wrong codes. Wait a few minutes, then try again."
   },
   "captcha": {
-    "error": "Please complete the captcha verification."
+    "error": "Please complete the captcha verification.",
+    "load-failed": "Could not load the captcha.",
+    "init-failed": "The captcha could not start.",
+    "render-failed": "The captcha could not be shown."
   },
   "two-factor": {
     "title": "Two-Factor Authentication",
@@ -75,7 +79,8 @@
     "login-code-label": "Authentication Code",
     "login-verify": "Verify",
     "login-cancel": "Cancel",
-    "login-invalid-code": "Invalid authentication code. Please try again."
+    "login-invalid-code": "Invalid authentication code. Please try again.",
+    "cancel": "Cancel"
   },
   "magic-login": {
     "button": "Sign in with Email Link",
@@ -132,5 +137,15 @@
       "MAGIC_LOGIN_LINK_EXPIRED": "This sign-in link has expired or was already used. Request a new one on the sign-in page.",
       "BAD_REQUEST": "Signing in with a link is not available on this site."
     }
+  },
+  "a11y": {
+    "edit-secret-key": "Edit secret key",
+    "toggle-visibility": "Show / hide",
+    "cancel-edit": "Cancel edit",
+    "edit-project-id": "Edit project ID",
+    "cancel": "Cancel",
+    "cancel-setup": "Cancel setup",
+    "close": "Close",
+    "qr-code": "Two-factor QR code"
   }
 }
